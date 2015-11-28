@@ -183,7 +183,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="kn">import</span> <span class="nn">networkx</span> <span class="kn">as</span> <span class="nn">nx</span>
@@ -191,7 +191,7 @@ div#notebook {
 <span class="kn">import</span> <span class="nn">matplotlib.patches</span> <span class="kn">as</span> <span class="nn">mpatches</span>
 <span class="kn">import</span> <span class="nn">matplotlib.lines</span> <span class="kn">as</span> <span class="nn">mlines</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline 
+<span class="o">%</span><span class="k">matplotlib</span> inline
 </pre></div>
 
 </div>
@@ -204,7 +204,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Part-1:-Total-Infection">Part 1: Total Infection<a class="anchor-link" href="#Part-1:-Total-Infection">&#182;</a></h3><p>Here we assume that students are only connected to their coaches and coaches are only connected to their students. Thus, we model this as a simple, undirected graph. We know that:</p>
+<h3 id="Part-1:-Total-Infection">Part 1: Total Infection<a class="anchor-link" href="#Part-1:-Total-Infection">&#182;</a></h3><p>Here we assume that students are only connected to their coaches and coaches are only connected to their students. Thus, while we could model the coaching relationships via a directed graph, for purposes of the infection we model this as a undirected graph. We know that:</p>
 <ol>
 <li>If B coaches C, then C should get the new feature as well. </li>
 <li>Infections are transferred by both the “coaches” and “is coached by” relations.</li>
@@ -216,11 +216,12 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[107]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="k">def</span> <span class="nf">total_infection</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">network</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;infect every node in the connected component containing the user specified&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; infect every node in the connected component containing the user specified&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; takes an undirected graph as input &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="c">#infect the user</span>
         <span class="n">network</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">user</span><span class="p">][</span><span class="s">&#39;infected&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
@@ -234,240 +235,6 @@ div#notebook {
 </pre></div>
 
 </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Testing,-total_infection()">Testing, total_infection()<a class="anchor-link" href="#Testing,-total_infection()">&#182;</a></h2><p>Now we run a test case, assuming that the only connections are coaching ones. While the coaching relationship could be modeled through a directed graph with arrows pointing from the coach to the student, we model the network at the moment as an undirected graph because it functions as such in the case of the infections.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[104]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="c">#Testing Part 1</span>
-<span class="c">#Create a directed graph to model the coaching relationships (for use in the visualizations)</span>
-<span class="n">network</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
-<span class="n">network</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&quot;C&quot;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">network</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">network</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">)])</span>
-<span class="c">#create a deep copy of an undirected graph for use in the function total_infection()</span>
-<span class="n">networka</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">to_undirected</span><span class="p">()</span>
-<span class="n">total_infection</span><span class="p">(</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="n">networka</span><span class="p">)</span>
-<span class="c">#output the results</span>
-<span class="c">#expect &quot;A&quot;, &quot;B&quot;, &#39;b&#39;, &#39;c&#39; to be infected</span>
-<span class="n">networka</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[104]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>[(&apos;A&apos;, {&apos;infected&apos;: True}),
- (&apos;a&apos;, {&apos;infected&apos;: False}),
- (&apos;C&apos;, {&apos;infected&apos;: False}),
- (&apos;B&apos;, {&apos;infected&apos;: True}),
- (&apos;e&apos;, {&apos;infected&apos;: False}),
- (&apos;d&apos;, {&apos;infected&apos;: False}),
- (&apos;c&apos;, {&apos;infected&apos;: True}),
- (&apos;b&apos;, {&apos;infected&apos;: True})]</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[105]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="c">#Testing Part 2</span>
-<span class="n">network</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
-<span class="n">network</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&quot;C&quot;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">network</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">network</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">)])</span>
-<span class="c">#create a deep copy of an undirected graph for use in the function total_infection()</span>
-<span class="n">networka</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">to_undirected</span><span class="p">()</span>
-<span class="n">total_infection</span><span class="p">(</span><span class="s">&quot;a&quot;</span><span class="p">,</span><span class="n">networka</span><span class="p">)</span>
-<span class="c">#expect &#39;a&#39; to be infected</span>
-<span class="n">networka</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[105]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>[(&apos;A&apos;, {&apos;infected&apos;: False}),
- (&apos;a&apos;, {&apos;infected&apos;: True}),
- (&apos;C&apos;, {&apos;infected&apos;: False}),
- (&apos;B&apos;, {&apos;infected&apos;: False}),
- (&apos;e&apos;, {&apos;infected&apos;: False}),
- (&apos;d&apos;, {&apos;infected&apos;: False}),
- (&apos;c&apos;, {&apos;infected&apos;: False}),
- (&apos;b&apos;, {&apos;infected&apos;: False})]</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[106]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="c">#Testing Part 3</span>
-<span class="n">network</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
-<span class="n">network</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&quot;C&quot;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">network</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">network</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">)])</span>
-<span class="c">#create a deep copy of an undirected graph for use in the function total_infection()</span>
-<span class="n">networka</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">to_undirected</span><span class="p">()</span>
-<span class="n">total_infection</span><span class="p">(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="n">networka</span><span class="p">)</span>
-<span class="c">#expect &quot;C&quot;, &#39;d&#39;, &#39;e&#39; to be infected</span>
-<span class="n">networka</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[106]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>[(&apos;A&apos;, {&apos;infected&apos;: False}),
- (&apos;a&apos;, {&apos;infected&apos;: False}),
- (&apos;C&apos;, {&apos;infected&apos;: True}),
- (&apos;B&apos;, {&apos;infected&apos;: False}),
- (&apos;e&apos;, {&apos;infected&apos;: True}),
- (&apos;d&apos;, {&apos;infected&apos;: True}),
- (&apos;c&apos;, {&apos;infected&apos;: False}),
- (&apos;b&apos;, {&apos;infected&apos;: False})]</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[108]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="c">#Testing Part 3</span>
-<span class="n">network</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
-<span class="n">network</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&quot;C&quot;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">network</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">network</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">)])</span>
-<span class="c">#create a deep copy of an undirected graph for use in the function total_infection()</span>
-<span class="n">networka</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">to_undirected</span><span class="p">()</span>
-<span class="n">total_infection</span><span class="p">(</span><span class="s">&quot;Z&quot;</span><span class="p">,</span><span class="n">networka</span><span class="p">)</span>
-<span class="c">#expect an error saying user not in network. No nodes are infected.</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_text output_error">
-<pre>
-<span class="ansired">---------------------------------------------------------------------------</span>
-<span class="ansired">ValueError</span>                                Traceback (most recent call last)
-<span class="ansigreen">&lt;ipython-input-108-0a1f2af3a2ae&gt;</span> in <span class="ansicyan">&lt;module&gt;</span><span class="ansiblue">()</span>
-<span class="ansigreen">      6</span> <span class="ansired">#create a deep copy of an undirected graph for use in the function total_infection()</span><span class="ansiblue"></span><span class="ansiblue"></span>
-<span class="ansigreen">      7</span> networka <span class="ansiblue">=</span> network<span class="ansiblue">.</span>to_undirected<span class="ansiblue">(</span><span class="ansiblue">)</span><span class="ansiblue"></span>
-<span class="ansigreen">----&gt; 8</span><span class="ansired"> </span>total_infection<span class="ansiblue">(</span><span class="ansiblue">&quot;Z&quot;</span><span class="ansiblue">,</span>networka<span class="ansiblue">)</span><span class="ansiblue"></span>
-<span class="ansigreen">      9</span> <span class="ansired">#expect an error saying user not in network. No nodes are infected.</span><span class="ansiblue"></span><span class="ansiblue"></span>
-<span class="ansigreen">     10</span> networka<span class="ansiblue">.</span>nodes<span class="ansiblue">(</span>True<span class="ansiblue">)</span><span class="ansiblue"></span>
-
-<span class="ansigreen">&lt;ipython-input-107-b6f0c9ecc463&gt;</span> in <span class="ansicyan">total_infection</span><span class="ansiblue">(user, network)</span>
-<span class="ansigreen">      5</span>         network<span class="ansiblue">.</span>node<span class="ansiblue">[</span>user<span class="ansiblue">]</span><span class="ansiblue">[</span><span class="ansiblue">&apos;infected&apos;</span><span class="ansiblue">]</span> <span class="ansiblue">=</span> True<span class="ansiblue"></span>
-<span class="ansigreen">      6</span>     <span class="ansigreen">except</span><span class="ansiblue">:</span><span class="ansiblue"></span>
-<span class="ansigreen">----&gt; 7</span><span class="ansired">         </span><span class="ansigreen">raise</span> ValueError<span class="ansiblue">(</span><span class="ansiblue">&quot;User is not in the network.&quot;</span><span class="ansiblue">)</span><span class="ansiblue"></span>
-<span class="ansigreen">      8</span>     neighbors <span class="ansiblue">=</span> network<span class="ansiblue">.</span>neighbors<span class="ansiblue">(</span>user<span class="ansiblue">)</span><span class="ansiblue"></span>
-<span class="ansigreen">      9</span>     <span class="ansigreen">for</span> neighbor <span class="ansigreen">in</span> neighbors<span class="ansiblue">:</span><span class="ansiblue"></span>
-
-<span class="ansired">ValueError</span>: User is not in the network.</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[109]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="n">networka</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[109]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>[(&apos;A&apos;, {&apos;infected&apos;: False}),
- (&apos;a&apos;, {&apos;infected&apos;: False}),
- (&apos;C&apos;, {&apos;infected&apos;: False}),
- (&apos;B&apos;, {&apos;infected&apos;: False}),
- (&apos;e&apos;, {&apos;infected&apos;: False}),
- (&apos;d&apos;, {&apos;infected&apos;: False}),
- (&apos;c&apos;, {&apos;infected&apos;: False}),
- (&apos;b&apos;, {&apos;infected&apos;: False})]</pre>
-</div>
-
-</div>
-
 </div>
 </div>
 
@@ -505,7 +272,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[100]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="k">def</span> <span class="nf">_find_connected_component</span><span class="p">(</span><span class="n">cmpts</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">network</span><span class="p">):</span>
@@ -575,15 +342,14 @@ div#notebook {
         <span class="n">_infect_cmpt</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">cmpts_list</span><span class="p">,</span> <span class="n">num_list</span><span class="p">,</span> <span class="n">num_cmpts</span><span class="p">)</span>
         <span class="k">return</span> <span class="s">&quot;Successfully infected single component of size </span><span class="si">%s</span><span class="s">.&quot;</span> <span class="o">%</span> <span class="n">infect_num</span>
     
-    
     <span class="c">### Step 1: find all the connected components in the network</span>
     
-    <span class="k">while</span> <span class="n">num_tested</span> <span class="o">&lt;=</span> <span class="n">network_length</span><span class="p">:</span>
+    <span class="k">while</span> <span class="n">num_tested</span> <span class="o">&lt;</span> <span class="n">network_length</span><span class="p">:</span>
         <span class="c">#flatten the list of lists to a list to iterate</span>
         <span class="n">flattened_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">cmpt</span> <span class="k">for</span> <span class="n">cmpts</span> <span class="ow">in</span> <span class="n">cmpts_list</span> <span class="k">for</span> <span class="n">cmpt</span> <span class="ow">in</span> <span class="n">cmpts</span><span class="p">]</span>
         <span class="c">#find a random user from another component of the network not already looked at</span>
         <span class="k">while</span> <span class="n">random_user</span> <span class="ow">in</span> <span class="n">flattened_list</span><span class="p">:</span>
-            <span class="n">random_user</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">all_nodes</span><span class="p">)</span>
+            <span class="n">random_user</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">all_nodes</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">flattened_list</span><span class="p">)))</span>
         <span class="c">#find the connectd component the user belongs to</span>
         <span class="n">cmpts</span> <span class="o">=</span> <span class="n">_find_connected_component</span><span class="p">([],</span><span class="n">random_user</span><span class="p">,</span> <span class="n">network</span><span class="p">)</span>
         <span class="n">num_cmpts</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cmpts</span><span class="p">)</span>
@@ -596,7 +362,6 @@ div#notebook {
             <span class="k">return</span> <span class="s">&quot;Successfully infected single component of size </span><span class="si">%s</span><span class="s">.&quot;</span> <span class="o">%</span> <span class="n">infect_num</span>
         <span class="c">#increase the counter keeping track of the nodes accounted for in the iterations</span>
         <span class="n">num_tested</span> <span class="o">+=</span><span class="n">num_cmpts</span>
-        
     
     <span class="c">### Step 2: iterate through combinations of connected components </span>
     <span class="c">### to find one that satisfies the constraints</span>
@@ -639,202 +404,79 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Testing,-limited_infection()">Testing, limited_infection()<a class="anchor-link" href="#Testing,-limited_infection()">&#182;</a></h2><p>We use a similarly structured graph for our testing this time as well.</p>
+<h3 id="Optional-Part-3:-Visualization">Optional Part 3: Visualization<a class="anchor-link" href="#Optional-Part-3:-Visualization">&#182;</a></h3><p>The following is a visualization of the network after the implementation of full_infection(). This visualization uses the Fruchterman-Reingold force-directed algorithm, where the red nodes denote infected and green nodes unaffected.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[89]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="c">#Test Part 1</span>
-<span class="n">network1</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
-<span class="n">network1</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&quot;C&quot;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">network1</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">network1</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">)])</span>
-<span class="n">network1a</span> <span class="o">=</span> <span class="n">network1</span><span class="o">.</span><span class="n">to_undirected</span><span class="p">()</span>
-<span class="n">limited_infection</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="n">network1a</span><span class="p">)</span>
-<span class="c">#expect all nodes except &#39;a&#39; to be infected</span>
-<span class="n">network1a</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+<div class=" highlight hl-ipython2"><pre><span class="k">def</span> <span class="nf">visualize_infected_network</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">networka</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; here we use information from both the pre-infection directed graph</span>
+<span class="sd">        and the post-infection undirected graph, taking the node data from </span>
+<span class="sd">        networka (post-infection) and the edge data from network (pre-infection)&quot;&quot;&quot;</span>
+    <span class="c">#Position nodes using Fruchterman-Reingold force-directed algorithm</span>
+    <span class="n">pos</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">spring_layout</span><span class="p">(</span><span class="n">networka</span><span class="p">)</span>
+
+    <span class="n">node_color</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c">#determine the sequence of colors for the nodes</span>
+    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">networka</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="c">#infected nodes are red</span>
+        <span class="k">if</span> <span class="n">node</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;infected&#39;</span><span class="p">]:</span>
+            <span class="n">node_color</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
+        <span class="c">#uninfected nodes are green</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">node_color</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;g&#39;</span><span class="p">)</span>
+
+    <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_nodes</span><span class="p">(</span><span class="n">networka</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span><span class="n">node_color</span><span class="o">=</span><span class="n">node_color</span><span class="p">)</span>
+    <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edges</span><span class="p">(</span><span class="n">network</span><span class="p">,</span><span class="n">pos</span><span class="p">,</span><span class="n">arrows</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="c">#disregard matplotlib warning (known issue)</span>
+    <span class="kn">import</span> <span class="nn">warnings</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s">&quot;ignore&quot;</span><span class="p">)</span>
+    
+    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s">&#39;off&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;Visualization of the test network after infection&#39;</span><span class="p">)</span>
+
+    <span class="c">#create a legend</span>
+    <span class="n">infected_lab</span> <span class="o">=</span> <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#39;red&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&#39;infected&#39;</span><span class="p">)</span>
+    <span class="n">unaffected_lab</span> <span class="o">=</span> <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#39;green&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&#39;unaffected&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="p">[</span><span class="n">infected_lab</span><span class="p">,</span> <span class="n">unaffected_lab</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 
 </div>
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[89]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>[(&apos;A&apos;, {&apos;infected&apos;: True}),
- (&apos;a&apos;, {&apos;infected&apos;: False}),
- (&apos;C&apos;, {&apos;infected&apos;: True}),
- (&apos;B&apos;, {&apos;infected&apos;: True}),
- (&apos;e&apos;, {&apos;infected&apos;: True}),
- (&apos;d&apos;, {&apos;infected&apos;: True}),
- (&apos;c&apos;, {&apos;infected&apos;: True}),
- (&apos;b&apos;, {&apos;infected&apos;: True})]</pre>
 </div>
-
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
 </div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here we visualize an infected network after a call to total_infection().</p>
 
 </div>
 </div>
-
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[101]:</div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="c">#Test Part 2</span>
-<span class="n">network1</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
-<span class="n">network1</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&quot;C&quot;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">network1</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">network1</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">)])</span>
-<span class="n">network1a</span> <span class="o">=</span> <span class="n">network1</span><span class="o">.</span><span class="n">to_undirected</span><span class="p">()</span>
-<span class="n">limited_infection</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">network1a</span><span class="p">)</span>
-<span class="c">#expect &#39;a&#39; to be infected</span>
-<span class="n">network1a</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[101]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>[(&apos;A&apos;, {&apos;infected&apos;: False}),
- (&apos;a&apos;, {&apos;infected&apos;: True}),
- (&apos;C&apos;, {&apos;infected&apos;: False}),
- (&apos;B&apos;, {&apos;infected&apos;: False}),
- (&apos;e&apos;, {&apos;infected&apos;: False}),
- (&apos;d&apos;, {&apos;infected&apos;: False}),
- (&apos;c&apos;, {&apos;infected&apos;: False}),
- (&apos;b&apos;, {&apos;infected&apos;: False})]</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[68]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="c">#Test Part 3</span>
-<span class="n">network1</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
-<span class="n">network1</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&quot;C&quot;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">network1</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">network1</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">)])</span>
-<span class="n">network1a</span> <span class="o">=</span> <span class="n">network1</span><span class="o">.</span><span class="n">to_undirected</span><span class="p">()</span>
-<span class="n">limited_infection</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="n">network1a</span><span class="p">)</span>
-<span class="c">#expect a no nodes to be infected</span>
-<span class="n">network1a</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[68]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>[(&apos;A&apos;, {&apos;infected&apos;: True}),
- (&apos;a&apos;, {&apos;infected&apos;: True}),
- (&apos;C&apos;, {&apos;infected&apos;: False}),
- (&apos;B&apos;, {&apos;infected&apos;: True}),
- (&apos;e&apos;, {&apos;infected&apos;: False}),
- (&apos;d&apos;, {&apos;infected&apos;: False}),
- (&apos;c&apos;, {&apos;infected&apos;: True}),
- (&apos;b&apos;, {&apos;infected&apos;: True})]</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[90]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="c">#Test Part 4</span>
-<span class="n">network1</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
-<span class="n">network1</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&quot;C&quot;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">network1</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">network1</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">)])</span>
-<span class="n">network1a</span> <span class="o">=</span> <span class="n">network1</span><span class="o">.</span><span class="n">to_undirected</span><span class="p">()</span>
-<span class="n">limited_infection</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="n">network1a</span><span class="p">)</span>
-<span class="c">#expect either &quot;A&quot;,&quot;B&quot;,&#39;b&#39;,&#39;c&#39; to be infected and &quot;C&quot;,&#39;d&#39;,&#39;e&#39;,&#39;a&#39; to be unaffected</span>
-<span class="c">#or vice versa</span>
-<span class="n">network1a</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[90]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>[(&apos;A&apos;, {&apos;infected&apos;: True}),
- (&apos;a&apos;, {&apos;infected&apos;: False}),
- (&apos;C&apos;, {&apos;infected&apos;: False}),
- (&apos;B&apos;, {&apos;infected&apos;: True}),
- (&apos;e&apos;, {&apos;infected&apos;: False}),
- (&apos;d&apos;, {&apos;infected&apos;: False}),
- (&apos;c&apos;, {&apos;infected&apos;: True}),
- (&apos;b&apos;, {&apos;infected&apos;: True})]</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[110]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="c">#Test Part 4</span>
-<span class="n">network1</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
-<span class="n">network1</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&quot;C&quot;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">network1</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">network1</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">)])</span>
-<span class="n">network1a</span> <span class="o">=</span> <span class="n">network1</span><span class="o">.</span><span class="n">to_undirected</span><span class="p">()</span>
-<span class="n">limited_infection</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">network1a</span><span class="p">)</span>
-<span class="c">#expect an error to say the desired size of infection is larger than the network.</span>
-<span class="c">#No nodes are infected</span>
+<div class=" highlight hl-ipython2"><pre><span class="c">#Create a directed graph to model the coaching relationships (for use in the visualizations)</span>
+<span class="n">network</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+<span class="n">network</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&quot;C&quot;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">network</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">network</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">)])</span>
+<span class="c">#create a deep copy of an undirected graph for use in the function total_infection()</span>
+<span class="n">networka</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">to_undirected</span><span class="p">()</span>
+<span class="n">total_infection</span><span class="p">(</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="n">networka</span><span class="p">)</span>
+<span class="c">#expect &quot;A&quot;, &quot;B&quot;, &#39;b&#39;, &#39;c&#39; to be infected</span>
+<span class="n">visualize_infected_network</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">networka</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -846,60 +488,196 @@ div#notebook {
 
 
 <div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_text output_error">
-<pre>
-<span class="ansired">---------------------------------------------------------------------------</span>
-<span class="ansired">ValueError</span>                                Traceback (most recent call last)
-<span class="ansigreen">&lt;ipython-input-110-206e20b0df14&gt;</span> in <span class="ansicyan">&lt;module&gt;</span><span class="ansiblue">()</span>
-<span class="ansigreen">      5</span> network1<span class="ansiblue">.</span>add_edges_from<span class="ansiblue">(</span><span class="ansiblue">[</span><span class="ansiblue">(</span><span class="ansiblue">&quot;A&quot;</span><span class="ansiblue">,</span><span class="ansiblue">&apos;b&apos;</span><span class="ansiblue">)</span><span class="ansiblue">,</span> <span class="ansiblue">(</span><span class="ansiblue">&apos;A&apos;</span><span class="ansiblue">,</span><span class="ansiblue">&apos;c&apos;</span><span class="ansiblue">)</span><span class="ansiblue">,</span> <span class="ansiblue">(</span><span class="ansiblue">&quot;B&quot;</span><span class="ansiblue">,</span><span class="ansiblue">&apos;b&apos;</span><span class="ansiblue">)</span><span class="ansiblue">,</span><span class="ansiblue">(</span><span class="ansiblue">&quot;B&quot;</span><span class="ansiblue">,</span><span class="ansiblue">&apos;c&apos;</span><span class="ansiblue">)</span><span class="ansiblue">,</span><span class="ansiblue">(</span><span class="ansiblue">&quot;C&quot;</span><span class="ansiblue">,</span><span class="ansiblue">&apos;d&apos;</span><span class="ansiblue">)</span><span class="ansiblue">,</span><span class="ansiblue">(</span><span class="ansiblue">&quot;C&quot;</span><span class="ansiblue">,</span><span class="ansiblue">&apos;e&apos;</span><span class="ansiblue">)</span><span class="ansiblue">]</span><span class="ansiblue">)</span><span class="ansiblue"></span>
-<span class="ansigreen">      6</span> network1a <span class="ansiblue">=</span> network1<span class="ansiblue">.</span>to_undirected<span class="ansiblue">(</span><span class="ansiblue">)</span><span class="ansiblue"></span>
-<span class="ansigreen">----&gt; 7</span><span class="ansired"> </span>limited_infection<span class="ansiblue">(</span><span class="ansicyan">10</span><span class="ansiblue">,</span>network1a<span class="ansiblue">)</span><span class="ansiblue"></span>
-<span class="ansigreen">      8</span> <span class="ansired">#expect an error to say the desired size of infection is larger than the network.</span><span class="ansiblue"></span><span class="ansiblue"></span>
-<span class="ansigreen">      9</span> <span class="ansired">#No nodes are infected</span><span class="ansiblue"></span><span class="ansiblue"></span>
-
-<span class="ansigreen">&lt;ipython-input-100-ca89139bd7c0&gt;</span> in <span class="ansicyan">limited_infection</span><span class="ansiblue">(infect_num, network)</span>
-<span class="ansigreen">     48</span>     network_length <span class="ansiblue">=</span> len<span class="ansiblue">(</span>all_nodes<span class="ansiblue">)</span><span class="ansiblue"></span>
-<span class="ansigreen">     49</span>     <span class="ansigreen">if</span> infect_num <span class="ansiblue">&gt;</span> network_length<span class="ansiblue">:</span><span class="ansiblue"></span>
-<span class="ansigreen">---&gt; 50</span><span class="ansired">         </span><span class="ansigreen">raise</span> ValueError<span class="ansiblue">(</span><span class="ansiblue">&quot;The infection size exceeds the network length.&quot;</span><span class="ansiblue">)</span><span class="ansiblue"></span>
-<span class="ansigreen">     51</span>     <span class="ansired">#start with a random user</span><span class="ansiblue"></span><span class="ansiblue"></span>
-<span class="ansigreen">     52</span>     random_user <span class="ansiblue">=</span> np<span class="ansiblue">.</span>random<span class="ansiblue">.</span>choice<span class="ansiblue">(</span>all_nodes<span class="ansiblue">)</span><span class="ansiblue"></span>
-
-<span class="ansired">ValueError</span>: The infection size exceeds the network length.</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[111]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="n">network1a</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[111]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>[(&apos;A&apos;, {&apos;infected&apos;: False}),
- (&apos;a&apos;, {&apos;infected&apos;: False}),
- (&apos;C&apos;, {&apos;infected&apos;: False}),
- (&apos;B&apos;, {&apos;infected&apos;: False}),
- (&apos;e&apos;, {&apos;infected&apos;: False}),
- (&apos;d&apos;, {&apos;infected&apos;: False}),
- (&apos;c&apos;, {&apos;infected&apos;: False}),
- (&apos;b&apos;, {&apos;infected&apos;: False})]</pre>
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAX4AAAEKCAYAAAAVaT4rAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
+AAALEgAACxIB0t1+/AAAIABJREFUeJzt3XecXGXd/vHPtTXZNEIApWMMEDpKVylKEURQQBARFcEf
+PCoCKqiPogLqg4/SRFRUkKLSLPQmUkMRBATpj0gviaQnu5ts+/7+OCcw2WydObMzO+d6v155ZXbm
+nDPfadfc5z733EcRgZmZ5UddpQswM7OR5eA3M8sZB7+ZWc44+M3McsbBb2aWMw5+M7OccfD3Iulx
+STuV+T56JE1NL/9C0olluI8bJH0q6+0O4X6/L+kNSa8NcfmTJP223HXllaQLJX0vo219XtIsSQsl
+rZzFNnttf0dJTxdZz+QM6/ikpJuz2l41ylXwS7pJ0sl9XP8RSa9LqouITSPirpGqKSI+HxHfL2Ub
+fYVnRHwoIkY0UCWtA3wFmB4Ra/Rx+y6SXu51dWY/JMkq5CStl345l+XzMcJfdkEGz7GkRuB0YNeI
+mAhs3sdrWZKImBER04upJyLmFXOffb3WEfH7iPhgMdsbLXIV/MCFwKF9XP8p4HcR0TOy5dScdYA5
+ETFnGOuoXMVkoJprG5Sk+mUXM9jc24ExwFMZbAtJDSVuItN6GOWv9bBFRG7+AWOB+cCOBddNBtqB
+zdK/XwA+kF7eFngQWADMBE5Pr98FeLnXtnuvdx8wD3gN+CnQWLBsDzA1vXwh8L308rXAooJ/3cCn
+09t+AryU1vIg8L70+j2BpUBHus4/0uvvAI5ILws4Ma1xFnARMDG9bb20nk8DLwJvAN8c4DmcBFwM
+/Cfd3rfS7e8GtKU1LwJ+02u9cenzvOz2hcDqwHeBy9OaFgKPA1sVrLcG8Kf0/p4DvtRPXUemz8HS
+dPtXD7Z+H6/vaen1L6XPybLXYbs+7u8k4Irh1t3X60XyfnqsYN1bgAcK/p4B7Jte3ih9beel97lP
+wXIXAr8AbgAWA7sCF/DW+2sCcDtwVj/P4WeBJ9PH82/gyPT6DdLtLXtObuv1Wi8kCWIB3wCeBWan
+r+vkXu+zw0neZ3f0cf+7UPC5Inl/fRV4lORzexnQ3Ec9f02Xn54+d3OAp4EDe332T0+3OR+4i+SL
+o/C1XghsDxwGzChY9z3A39P1HgB2KLjtDuAU4O50/ZuBKZXOukGzsNIFjPgDhl8Bvy74+yjg4YK/
+n+etAL8P+GR6uQXYtq83aB/rvZskVOqAddMP07EFyxYG/wXAKX3UuRfwCrBm+vcnSb6k6ki6U14H
+mtLbvgtc3Gv924HD08uHA/9KP3zjSALp4vS2ZR/IX6Yfqs2BJSTdNX09fxcDV6bbWRd4puB+du79
+vPRad4XbSQK0nSQQBfwPcF96Wx3wEMmXVgPwDpJA2qOf7S/3XA62fh+v73bp5XXT56RugMdSdN29
+Xy+SUGoHVgYaSb6cX06f47EkITs5ve1ZknBtAN5PEjYbpNu5kCScdkj/bl72nABTSEJrhfdaQR0f
+At6RXt4JaAXe1ddz0s9reSxwL8mXXiNwLnBJr/fZheljau7j/ndh+eB/HvgbyZfKZJLP0VH91DMu
+fc4+kz7/W5I0YjZKb/8ZyRfW6unt2wNNfb3WFAR/+prMI/n81QEHA3N56wvtDpLP1jSSL5LbgVMr
+nXOD/ctbVw8kLbSPSWpK//50el1fOoD1Ja0SEW0R8cBQ7iAiHo6IByKiJyJeJPmy2XmAVZbbzZS0
+AckH5KCIeDXd5u8jYl66zTNIPtQbFqw/0K7qJ0n2Vl6IiFbgv4GDe/VhnxwRSyPinyQtrC1WKDLp
+Ovg48N8R0Zo+ttNJuspWeByDPc4CMyLipkg+Sb8ruO9tgFUi4vsR0RURzwPnkXz4hnIfg63f+/W9
+f4iPo9S6l3u9IqKdpEW5M7AV8AhwD/A+koD6VyR92NsD4yLih+l2bweuAz5RUNNVEXFfut2l6XVr
+kgTU5RHxnf4eTETckNZKJMe5/gLs2M9z0tdzdBRwYkS8FhGdwMkkn7XC99lJEdFeUNtgzo6Imenj
+v5Yk0Pu6/w8Dz0fEReln5BHgz8CB6f1/lqTx9Xp6+98ioqOfx1Fob+CZ9PPXExGXkexN7JveHsAF
+EfFsRCwh2Qvcsp9tVY1S+9lGnYi4R9JsYD9JD5J8SD/az+JHkLSWnpL0PEk4Xj/YfaTBfQbJh7iF
+5Hl+cCj1SZoEXA18KyLuLbj+eJKW+xokb7aJwCpD2SZJK+fFgr9fSmt6W8F1Mwsut5G0oHpbhaQl
+13tbaw6xjv7M6nXfY9IP67rAGpIKD9zVk+ymD8Vg6xf1+pap7jtJWryvpJfnkXwRLCUJbUhe+94H
+VF9Mr4fkffFKr9tFEl6LSPbq+iVpL5K9kfVJWrctwD8HWqeX9YArJRUeK+ti+ffZcA8IF74v23nr
+sfa2LrBdr+e8gWQPdQpJa/zfw7xv0vt7qdd1hc95XzWOL+J+RlTugj91MUlLfzpwU0S80ddCEfEs
+cAiApAOAP6bD2FpJPhSkt9UDqxas+guSXf2PR0SrpOOAAwYrKg2NS4BbI+K8gut3BE4g6Up6Ir1u
+Lm+1VmKQTb9G8qFcZh2SD+Ss9PJQzQY6020tO6i2DiuGTX/6qnOg2l8macVtUOT2Xxpo/QFe38Ge
+z77uq9Bgdfc1iOBOksbCi8CpJF0255F0u52TLvMasLYkpXsZkATeQEMgA/g1SVfJDZL2jIi23gtJ
+aibpAjyU5PhIt6Qr6b9F3Nfjfwn47LI9jl7bX2+A9YZqoHVfAu6MiD36uO86kudxGit+kQ1Wz6vA
+/r2uWxe4cZD1qloeu3ogCf7dgc/RfzcPkg6VtCzQF5C8SXqA/yNp3X0oHVZ2IknXyzLjSVpYbZKm
+A58foJbCD9YPSL5Qjuu1zASSoJ4tqUnSd0ha/MvMBNaT1N+H9FLgy+nQtfEk/dGXxcCjmFbYVkR0
+k+zK/kDSeEnrAl8m6eYYilnAFEmFtQ+0q/0AsEjS1ySNlVQvaVNJWw+w/alDXX+A1/eN9P93DlBb
+KXXPYsXX616SrrttSA7sPknaiuWtPYW/kexZfE1So6RdSLo4LhugJgFExNEkx2OulTSmj+Wa0n+z
+gZ609b9CiBbo67U8F/ifdFgvklaVtG+faxdnoOf8OmCD9DVtTP9tI2l6+j7/DXCGpNXT12OHtLt3
+sNf6xnS7n5DUIOnjJA3G64ZYV1XKZfCnfdP3kITsNQMs+kHgcUmLgDOBg9N+8AXAF0haZK+QjDAo
+3IU9nqQluZCkf/8ylm9Z9L687O+DST7o8yQtSv99Argp/fd/JKMS2ll+9/MP6f9z0u6r3n4D/JYk
+QJ4jCY8v9VPPQNeRrteabmcG8HuSA4iDrUdEPE3yJfScpLmSVqfvceaRLt9NEmxbpvf3BsnzOZG+
+nQ9sLGmepD+nH/iB1u/v9W0j+RK+J93Wtn09nBLqXuH1Su/zIeCJiOhKb78XeCEiZqfLdAL7kBz4
+f4NkT+BTEfF/g9S07LojSd6vV6Ut/LcWilgEHEPyxT6X5LjB1X09vnT53q/l20lGnl0D/EXSQpKD
+59v2tf4ABlqm9+MrrGcxyRfVwSSt9NdJ9pyWHcs7HniM5FjKnPQ29Xqt50rarvB+Ihma/GGS0UWz
+0+18OCLm9lNzX69B1dFbe4xmZpYHuWzxm5nlmYPfzCxnHPxmZjnj4DczyxkHv5lZzjj4zcxyxsFv
+ZpYzDn4zs5xx8JuZ5YyD38wsZ/I6O6eZAZI8Z8soERGZTQbn4DfLuSwDxcoj6y9od/WYmeWMg9/M
+LGcc/GZmOePgN7OqJOlxSTsNYbkNJT0iaaGko0eitn7qOEzSjErd/3D44K6ZLW8kRvoM4YByRGw6
+xK19jeQ81VuWUpKkO4DfRsT5pWxnNHCL38xGu3WBJzPYTm6Gtjr4zawqSXpB0q6STpJ0haSL0u6c
+xyVtlS5zG7ALcE562zRJzZJOk/SipJmSflF4gnlJH0m7hhZIelbSByX9ANgx3c4iSWeny06XdIuk
+OZKelnRgwXamSLom3c799H/C9qrj4DezalXYAt+H5OTuk0hO6H4OQER8AJgBfDEiJkbEs8APgWnA
+Fun/awLfAZC0LXAR8NWImATsRHJC+28VbGdCRBwjaRxwC/A7YFWSE7n/XNJGaU0/A9qAtwOHA59l
+lOw1OPjNrNoFMCMiboqIIAniLXotIwBJAv4f8JWImB8Ri4FTSUIb4Ajg/Ii4FSAiXouIZ3pvJ/Vh
+4PmIuCgieiLiEeDPwIGS6oH9ge9ERHtEPEHyhTIqfgzng7tmNhrMKrjcBoyRVBcRPel1y1raqwIt
+wEPJdwCQhPGyRu5awPUD3E9hi31dYDtJ8wquawAuBlZJL79ccNtLQ3solefgN7NaMhtoBzaOiNf7
+uP1lku6fvvTupnkJuDMi9ui9YNri7wLWAZbtMaxTVMUV4K4eM6t2Q+k+EUC6B/Br4CxJqwJIWlPS
+svA+H/ispA9Iqktv2zC9bRbLH6C9DthA0qGSGtN/20iaHhHdJN0+J0kaK2lj4DO4j9/MrGRR8K/3
+9f39/XXgWeBvkhaQHKDdACAi/k5yEPZMYD5wB2+11H8CfEzSXElnpccH9iA5PvAq8DrJ8YKmdPmj
+gfHATOA36b9RQcmxEjPLI0nh2TmrX9avk1v8ZmY54+A3M8sZB7+ZWc44+M3McsbBb2aWMw5+M7Oc
+cfCbmeWMg9/MLGcc/GaWO5L2k/RyOvf+Fnk7faMnaTOz5ejk8p96Mb5b8V8LnwZ8ISKuBZB0Pjk6
+faNb/GaWK+mc/euw/Okac3X6Rge/mVUlST2Sphb8faGk76WXd5H0iqSvSJol6TVJhxUsu7ekf6Sn
+RXxJ0nfT65uBRUA98Gh66sVbydnpGx38ZjZa9J6l823ARGANkjNr/UzSpPS2xcCh6ekV9wY+L+kj
+EbE0Isany2weEdMiYldydvpG9/GbFUlSHbA78G7qWZluWoFXgD9FxLyB17YiFR4b6AROSefgv1HS
+YmBD4IGIuHPZQhHxmKTLgJ2BqwfbdsHpGzePiPnpdacCvwe+SR+nbxygxjdP35j+/YikZadv/AHJ
+6Rs3jYh24AlJF5F8kZSVg99smCRNRhxBE19lPOOYTgtjqaeTYBZt/Jufqll/ooPTI+Ifla63hs0p
+OPUiJC3n8QCStiNptW9CMn9+M3DFINvLzekbHfxmwyBpcxq5lQ1oYXtaWIvC9p2AcSwGHuZg7mE/
+NeoUuvhR+MQXxWgjCeBlVmf5kBzIJcDZwAcjokPSmSRBOxQ1f/pG9/GbDZGkTWnkbvZlCgfSwtr0
+fVLA8cBO1PMFWpjAt2nk5BEutVY8AnxSUr2kPRleF8h4YF4a+tsChzB433luTt/o4DcbAknjaeQ2
+9mE8mw3pHLAwCTiccTTxVUkfLW+FNelYYB9gHklwX9nr9oEC8gvAKZIWAt8GLh/Curk5faNPvWg2
+BJKOYhqncSjjB1+6l2eAK3ky2mOT7CsrjU+9ODr41ItmI0ySaOZr7FBE6AOsD9SxnqStsq3MrDgO
+frPBbU8zq/GOIteuA3agmWa+nGVRZsVy8JsNbjPWo66kT8u61FOHW/xWFRz8ZoObyFgaS9rCGKCn
+yK4is4w5+M0G10oHXSVtoQMQ7dmUY1YaB7/Z4F7kNTpL2sJ/AHgui2LMSuVf7poN7hbm0s1Mkqm0
+inEvi1jC2VkWlRWp/PPvW3Vx8JsNIiI61aBzeIAT2Jcxg6/Ry6vAQtqBmzMvrkQew59P7uoxG4pu
+zuWf9PDqMNfrAm6gjW5+nP5E36ziHPxmQxARr9HFofyWdmYNcaUu4AraeYM76ebMctZnNhyessFs
+GCR9gibOYzfGsjnqs+MngBeAv9DKHO6kgwMiYsnIVmrWPwe/2TBJ2ppmTqGH97MZsD5jGENyWpA5
+BH+jlSXMYSk/BH7Va854s4pz8JsVSdKa1PN5mngvMBlop4fnWcq5wAzPwW/VysFvZpYzPrhrZpYz
+Dn4zs5xx8JuZ5YyD38wsZxz8ZmY54+A3M8sZB7+ZWc44+M3McsbBb2aWMw5+M7OccfCbmeWMg9/M
+LGcc/GZmOePgNzPLGQe/mVnOOPjNzHLGwW9mljMOfjOznHHwm5nljIPfzCxnHPxmZjnj4DczyxkH
+v5lZzjj4zcxyxsFvZpYzDn4zs5xx8JuZ5YyD38wsZxoqXUAtkiRgW2BjYCKwGHgOuDMieipZm1mt
+k9QC7AKsStK4nQvcHRFzKllXNVFEVLqGmiFpvOCQifD1FnjbjsBkqF8E3X+HntehbQmc2QXn+U1o
+li1JG9LIMQSf4W10M4k66hCL6OZVmqjnapZyekT8vdK1VpqDPyOStmiBv74XxhwP43dj+X60AB4A
+zoK2q6GnHfaPiFsqU61Z7ZAkGjkVcQzb0MA2NLJSr4VagX/Qw32008lNdPDJiFhaiXqrgYM/A5Le
+NRbu+g2MOxg02PJ3AR+G9kVwYERcPwIlmtUkSaKJ85jMx/kU4xg/yAqdwBW08RIPsZRdI6JzJOqs
+Nj64WyJJq7bAXy8eYugD7ATcAmNb4ApJG5e5RLPa1cDxTODjHD6E0AdoBA6mhbXYimbOL3d51crB
+X6Im+PyB0PKxIYb+MtsB34LmifDtMpVmVtMkjQW+wyGMo3kYK9YDB9FCDwdKWq8sxVU5B38JJDU0
+wjHHwZhi1j8S6jvgo5JWzro2sxw4iLWAKUWs2QxsSR0NfDHjmkYFB39p9p4GTVsWufIqwL7Q0wCH
+Z1mUWS6M4evsMKQOnr5tRxNwlKTh7C/UBAd/Cepg249SwhsP2BdaJsLOWdVklgeS6lnKdKaVsJFV
+gDEIeEdGZY0aDv4StMCqKw+zb7+3lQAVt7NqlmcTqaeT+hK3MoZuWGHwZ81z8JegC1qXlLiNdP22
+kosxy5el9JQc+9CNePNjmB8O/hIsgRefKPFN8wz0LIXns6rJLCfaER0sLGELXcBimoGZGdU0ajj4
+S3P5H4AFRa7cA/wU2hfDrzOsyazmRURQzyU8RFfRG3kKqOfRiHDw29BFxOtNyY+3ivr5881AO7wK
+5H7uELNh6+As7qeD7iLXv5dFLOF/M61plHDwl2gB/Oh70PbGMNdrB45P1p8FGfRVmuVMRDxO8BQP
+MPwZb/8FzKYDuCbzwkYBB3+JImJGK/xsV2idO8R1lgL7kczTDOwIXJ7HscRmJVvKQdzGIp4Yxjqv
+AH+gjU4+EhHFdxWNYg7+DLTBN56DC7aC1tsYuN/nIeA9EHex3FHh/YFrJY0ra6FmNSYinqOT93MV
+87iDbtoHWLiT5AN4EW10cFBE3DNCZVYdz86ZoTrp0AnwvUmwxlegaUfeOgvLI8DpsOgFWNIBF3TC
+wcA6vTZxH7B3RMwb2crNRjdJ69HMT+lmNzYF3sUYJpL8yqYVeAx4mE7qeIAlHBMRD1ey3kpz8Gcs
+PfvW9S2wVwPJyJ16mFMH/5gHPwFujIhuSWsBtwDTe23iMWD3iJg1spWbjX6S3k49R9HIoXSzJjAW
+kQzd7OG8iPh/FS6xKrirJ2ORfJOObwMWkrT2F8ChcyN2j4jrIqI7Xe4Vkhmae7c8WtPVzGyYImJm
+dMXJ0R7r08nn6AQ6ID38u3pFi6siDv7ymNrr7+f6Wigi3gA+QHJuFoA5JDOGFzXbp5kt58lef/vc
+FykHf8YkjQHWLLgqgBf6Wz4iFgB7Aj8DNgFuBe6UtEYZyzTLg2dYfqzFeh5AkWiodAE1aL1ef78c
+ER0DrRAR7cDR6Z9flzQPuFvS7hHx7zLUaFbzIqJd0u9I5uF8O3AsScdP7vngbsbS8fibApcAtwH/
+jojTitjOfwEnAntGxOPZVmmWH5I2A66IiI0qXUu1cPCXiaRZwJYR8XoJ2/gEcBawb0Tcn1lxZjmS
+NsYWABMH2/vOC/fxl4GkCcAESpz1LyIuJTk717WSdsuiNrO8iYilwIvA+pWupVo4+MvjHcDzkcHu
+VERcDxwAXCJpv5IrM8unJ/Gonjf54G55TKWfIZzFiIgZkvYErpc0KSIuzGrbZjnh4C/gFn95ZBr8
+AOlPzN8PnCzp2Cy3bZYDDv4CDv7ymApkPgwzIp4mmc3zC5JOTqeHMLPBOfgLOPjL451k3OJfJiJe
+Ign/fYGfSPJraDa4Z4Bpkty9jYO/XDLv6ikUEf8h6fZ5N3CB38xmA4uINuA1kkZZ7jn4MyapHliX
+AaZpyEJEzAf2AFYD/phOFWFm/XN3T8rBn701gLlpC6Os0vv4CMlJva5Pfz9gZn1z8Kcc/Nkry4Hd
+/qS/RDwkvc+/SpoyUvdtNso8gYMfcPCXQ1n79/uSzvF/FHAHntnTrD9u8acc/Nkr24iegUTi68Dv
+gBmSfBDLbHlPAxumx+FyzcGfvRFv8ReKiB8CPyZp+W9aqTrMqk1ELAb+w4pTp+eOgz97FQ1+gIg4
+FziepM9/u0rWYlZl3N2Dg78cRvTgbn8i4jLemtlz10rXY1YlHPw4+DOVDqccB8yqdC0AEXEDycye
+l3pmTzPAwQ84+LM2lYymY85KRMwgOafvzyUdVuFyzCrNwY+nZc5axfv3+xIRD0t6P3BzOq3zTypd
+k1mFPAVsJKkuInoqXUylOPizVZXBD8nMnpJ2BG6RNBk4uXDPJB3itvdKcGQdrAM0C+a3wu1L4Ofp
+5HBmo1pELJA0H1ib5KxcueTgz9ZUklkAq1JEvJSG/83AypKOAxqa4IRxcNxUaD4WJkwDxgDzgGtg
+i4vguJWkuxbANyPiwUo+BrMMLOvuyW3w+2TrGZJ0I3BOerrEqiVpJeBa4OUJMHUb2PzHMPbd/Sy/
+GPgtxNegvRUO64n4w8hVa5YtSWcBL0fE6ZWupVLc4s9WRX61O1wRMV/SPuPghf1hwvlQN9BPGccD
+nwe9B1p2hosktVX7l5vZAJ4Ecv37Fo/qychITceclRb45o7QNFjoF9oCuAnGjoXLPRmcjWK5H9nj
+4M/OmsDsiGivdCGDkTQm4L9+CmOHO2nJ9sC+oAY4ohy1mY2Ap4CN83zqUgd/dqp2RE8fDtwamFbk
+yl+GljHwFZ/20UajiJgDtJOcOyOX/MHNTlVM1TAUk+GYL0PRJ23ZFng7tADvy64qsxGV6+4eH9zN
+zqg4sAvQDWtvUsL6AjYDnk3G+5uNKpImJRf4upp0AF3MIXgcuDIillS2upHh4M/OVGBUjHTphuax
+JW5jPNSTtPrNRgVJm9HEV2ngIKZSz1o00ciudADPsojX+aUa9Wu6ODsianqMv4M/O6Omj78BFi+A
+ldYuYRtzoQtYkFVNZuWkeh1JE2fyHprYioYVOjp3ZgJzgAc4moc5UtIBEfGXStQ6EtzHn51RE/zA
+Q7dB0b/c6wDuhkbgn9mVZFYeqtcXaeFMjqKFXfoI/WWmAHvRxKGMp4mrJO0xknWOJAd/ESQ1SvrY
+ytKtK0v/N1l6aRKs3AInStqg0vUNZgGccTq0Fpv8VwGCJyLiqSzrMsuapPfRxI84nBaG+suTdYFP
+MpZG/iSpJo9jOfiHQVLzGOmUFvjPVvCbn8AHboL174S1r4a6L8KRE+DRydJ9knaqdL0DmDEf5txe
+5Mo/hkXz4UeZVmRWDmP4LrsxlpWHud66wLtopIFjylFWpXmuniGStNIE+MsOsOlpMHazfpZbClwB
+HA3tbfClzojzR7DMIauTDl4dzn8EWlYdxnpnQPd34eXFsEFEdJatQLMSSVqHRp7hBMbQVMQGZgPn
+soguVo2IpVnXV0lu8Q+BpOYJcMvBsPkNA4Q+QDPwKeABGDsJzq6TDhqhMoelJ+Ky+XDOe6H11SGu
+czZ0fxsWLIZdHPpW9Ro4ii1RUaEPsAqwOgL2z7CqquDgH4KxcNJ7YZNzoXmoUxxsCNyW/ML1Qkmr
+l7O+YrXBN16GUzeBtpOh6/U+lukBbgJ2hdZvwmttsHWtD3WzGtHINqxHc0nbeCfjUO390MvBPwhJ
+zcAXz4Kxw32yNgcOATXDUWUorWQREe0RP1gA7zkNfj8V2veApV+GnhMhjoIla0Hrx+HZ2+C4Vtgo
+Ip6vdN1mQzSp6Nb+Ms2IBlbJpJoq4nH8gzvgXSQt+GIcA2MuhWMkfT8iurIsLCsR8ShwmKRjb4HL
+b4Fu4H5gPvAAcH81nUfYbIgWU2qHZAfQxbwsiqkmDv5BTIajjythXpvNgXdC/WOwK8mZr6pWelq6
+TuD8iLiq0vWYlaSLJ3mdndi4hJx7hVZi1Pw+Z8jc1TOIHlh7eonb2DSZ3mCtLOoZAesDz1a6CLOS
+dXIuf6eD7iLXXwg8Tx3JQL2a4uAfRE8G89qMS57nUjdTdunJZNZjlMwyajaQiHgCeJqni9zAQ3RR
+x+URsTDLuqqBg38QDbCo1Alp5oyeeW3WAd4YDSeTMRuSJXyPm2mlbZjrzQbuo4MOavK8vA7+QXTD
+/X+h6J1FOoE7kq6ehzMrqnym4W4eqyERcRXt/IaL6Rhy+M8FLqSNLo6LiMfLWV+lOPgHsRDOOAuW
+FJv81wABz6S7ndVufeBflS7CLFOd3M4bdHIu7TxOsv/dl6XAgwS/pI02Toju+PUIVjmiPKpnEBHx
+4ErSyzfA9H2KWD+d1+Z/My+sPNzit5oiaXvgl3SzMwtZm+v4NtexEVvTyOo00EQS+C+wlEcJ6pnB
+Uk6JiLsrXHpZea6eIZC07ypw6SPQsuYw1jsdek6CFxfD9IjoKFd9WZF0DXBBRFxZ6VrMSiVpGjAD
+OCIibii4fhMa+S8amE4yVHs+nTxEF+dGxMuVqnckOfiHaIz036vBiXdAy9QhLH8GdJ8IaodvRsSo
+aPFLego4KCIeq3QtZqWQtApwH/DjiPhVpeupNu7jH6IlEafOhK9vDu0nQEdf8xZ0A9cCO8Hi78Ir
+7fB+4AuSjh7ZaocvHcr5DjyU00Y5SWNJDq9d4dDvm1v8wyRp/RY4pgc+uzX0bAKNLVA/GzpvAjrg
+hQVJn/4VEbFE0nrArcAvIuK0StY+kLTOuyNitPzQzGwFaQPmCmAJcKinGumbg79IklqADwFrkPw4
+az7w94imaw24AAAIpklEQVRYYdimpLVIwv+3EfH9ES10iCTtBnwrIt5f6VrMiiXpDOBdwJ61Nod+
+ljyqp0gR0Qb8cYjLviJpZ+Cv6W7oiVXYEvFUDTaqSToW+CDwPof+wBz8IyQiZkraBbgFGCPp+CoL
+/2l4DL+NUpL2A04A3hsRNTebZtZ8cHcERcRs4APAjsA5kqrp+XeL30YlSTsAvwT29UmChqaagicX
+0tbIbsAWwK/Tg1HVwC1+G3UkrQ/8GfhMX8fXrG8+uFshksaTDDl7DTiskidpSb98FgNT0mMXZlVP
+0qrAvXis/rC5xV8hEbEY2JvklM6XSir1JHGlWAuY49C30cJj9Uvj4K+gdPrjjwDNwB/T8/tWgvv3
+bdRI91B/T/JjwxMrXM6o5OCvsHTY2cdIpoq6Ov19wEjz5Gw2mpwGrAQcXmUj40YNB38VSCdw+wTw
+BnB92v8/kjwds40Kko4D9gD2Hw0TH1YrB3+VSA/uHkay+3qzpEkjePdu8VvVk7Q/cDywV0TMr3Q9
+o5mDv4pERDdwJPAIcIuklUforj2U06qapPcA5wL7RMRLla5ntPNwziokSST9mLsCu0fEG2W8rzqg
+FVglIlrLdT9mxUrH6s8APhsRN1a6nlrgFn8VSg9YHQ9cB9wh6e1lvLu1gLkOfatG6Vj9G4FvO/Sz
+47l6qlQa/idKWgLcKWnXiHilDHfloZxWldIRbtcCl0XU7vlvK8HBX+Ui4vtp+N8l6QMR8ULGd+H+
+fas66Vj935G8N79d4XJqjoN/FIiI0wpa/rtFRJZB7Ra/VaPTScbqH+yx+tlz8I8SEXFOGv63S9oj
+Ip7MaNPTSM5NalYV0rH6u5HMq++x+mXg4B9FIuI8SUuBWyV9MCL+mcFm3eK3qiHpAJKBDe/xWP3y
+8XDOUUjSQcDZwN4R8VAJ2/FQTqs4SZsDzwGbA1cBH4yIf1S2qtrmFv8oFBFXpC3/GyV9JCKG3VWT
+jo2eCMxz6FulpO/D24CZwGrApx365edx/KNURFwNfAa4Jj2f73BdCDwIvE3SI2mry2zEFIzRnwJs
+AtQD/lXuCHDwj2LpD1o+DvxB0u7w5m7zUKyf/l9HcjawhdlXaHkmqUXShpK2lbRx4fxTBWP031mw
+ysrAfiNdZx65j78GSHofyennriSZ6+dLEXHOAMtPAgoPnHUALelcQWYlkbQpTRxHD4cwli6a6KGT
+OlppooGbWcoZwLGsGPIXk5yNzqFUZg7+GiHpVOAbBVedEBGn9bPsViTdPMs8HREblbM+q32SVqKZ
+PyO2Z1sa2ZoGJhYs0A48SnAPXSyhkc7lVr8V+JCHb44MH9ytAZLWAI7rdfWPJY2JiO/3WvZtwO69
+lvVwTiuJpFVo4n42Y032opn6PhYaC2yP2I5G/kYS9cmZph8HDnDojxz38deAiHgN+CiwpNdN35P0
+A0n1kvaeLN05Fl6cCidtBKxJcs7HMbCupI1Hum6rDZKaaeKvbM1a7N1P6C+3ArAD8GGgkR7gMxGx
+oOyF2psc/DUiIm4G9iIZl1/omy2wYGO49EzYaQ40/xuanwReIZkI5TjYZCV4cJJ0YwXO/mWj3ydY
+jWnsRhMaxlpbAlvQTSOfLldh1jf38dcYSe8lGSI3AZK96/OAQwZZrwP4HCy5Cp5fBDu4BWZDpTF6
+iv2ZzoZFrDwX+DmL6WK1iGjPujbrm1v8NSYi7iE5gcuCsSRDfQYLfYAm4CIYczBMnQA3pLMjmg1I
+0jY0sM6bg4OHa2VgLQI4KMOybBAO/hoUEX+fAA98A9hzGOsJ+Dk0r538dH7v8lRnNWZ3NqO5pCTZ
+kgmM4WOZVWSDcvDXIEmrdMKOXyxi3QbgGzB+Jfha1nVZDWpgNcYPejh3YOMAsUo2BdlQOPhrUAMc
+sT/ElCLXPxDohq0kTcuyLqtBQQ+lHiZM1u8pvRgbKgd/DZoEBxySHNctyhhgn+SDuGt2VVlN6mYm
+C3r9FGu4FgLBzGwKsqFw8NegHpi8WonbWDMZ4r9yFvVYTbuGx+hKf4hVnIdYxBJ+n1lFNigHf23q
+KXXSna6kxe+5e2xAEfE04jGeKnIDM4HZdALXZFiWDcLBX4ME/3mlxG08nwztn51FPVbjlvC/3Mni
+Ybf6A7iLJfRwTkSUss9gw+Tgr0Fz4cJfweJi158P3JzMjX59dlVZDbuahdzLlbQP6xDtXXTxLK/Q
+zellq8z65OCvTZfeDXqxyJUvgGiCmyNiVqZVWU2KiG462I9/8SiX0EbbICt0ADfSwT28Rge7RITP
+BTHCPGVDjRov/ewQ+Nyvkh/lDtkiYANonQl7RcSMMpVnNUhSE82cQzefYjo9bE8La8Kb8/fMBh5g
+Kf8gqONOlnJIRMytYMm55eCvUZKmjINH/gfWOGaIe3ZLgD2h7SH442KfEMOKJGkKdRxBA1+mk9Vo
+oINuGqijDfgVXfwsIl6odJ155uCvYZKmjoN7vgRTvgONAw3sfxnYH1qfgdsWwf4+2GZZkNQMTCSZ
+NbbdjYnq4D7+GhYRz7XClr+Au1aDJcdBx7/gzR9adgO3AHvB4g2g7Wk4exF81KFvWYmIpRHxRkS0
+OfSrh1v8OSHpHS1wdMDnlsL4RujqgMaJ8NxC+FHAJRFR9EggMxs9HPw5JKmJZEqHRRHhOVLMcsbB
+b2aWM+7jNzPLGQe/mVnOOPjNzHLGwW9mljMOfjOznHHwm5nljIPfzCxnHPxmZjnj4DczyxkHv5lZ
+zjj4zcxyxsFvZpYzDn4zs5xx8JuZ5YyD38wsZxz8ZmY54+A3M8sZB7+ZWc44+M3McsbBb2aWMw5+
+M7OccfCbmeWMg9/MLGcc/GZmOePgNzPLGQe/mVnOOPjNzHLGwW9mljMOfjOznHHwm5nljIPfzCxn
+HPxmZjnj4DczyxkHv5lZzjj4zcxyxsFvZpYzDn4zs5xx8JuZ5YyD38wsZxz8ZmY54+A3M8sZB7+Z
+Wc78fxG9D2lKNLv5AAAAAElFTkSuQmCC
+"
+>
 </div>
 
 </div>
@@ -913,43 +691,24 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Visualization">Visualization<a class="anchor-link" href="#Visualization">&#182;</a></h3><p>The following is a visualization of the network after the implementation of full_infection(). This visualization uses the Fruchterman-Reingold force-directed algorithm, where the red nodes denote infected and green nodes unaffected.</p>
+<p>Here we visualize an infected network after a call to limited_infection().</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[38]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="c">#note: here we use information from both the pre-infection directed graph and the post-infection undirected graph</span>
-<span class="c">#specifically, we take the node data from networka and the edge data from network</span>
-
-<span class="c">#Position nodes using Fruchterman-Reingold force-directed algorithm</span>
-<span class="n">pos</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">spring_layout</span><span class="p">(</span><span class="n">networka</span><span class="p">)</span>
-
-<span class="n">node_color</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="c">#determine the sequence of colors for the nodes</span>
-<span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">networka</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
-    <span class="c">#infected nodes are red</span>
-    <span class="k">if</span> <span class="n">node</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;infected&#39;</span><span class="p">]:</span>
-        <span class="n">node_color</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
-    <span class="c">#uninfected nodes are green</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">node_color</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;g&#39;</span><span class="p">)</span>
-
-<span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_nodes</span><span class="p">(</span><span class="n">networka</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span><span class="n">node_color</span><span class="o">=</span><span class="n">node_color</span><span class="p">)</span>
-<span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edges</span><span class="p">(</span><span class="n">network</span><span class="p">,</span><span class="n">pos</span><span class="p">,</span><span class="n">arrows</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s">&#39;off&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;Visualization of the test network after total infection&#39;</span><span class="p">)</span>
-
-
-<span class="c">#create a legend</span>
-<span class="n">infected_lab</span> <span class="o">=</span> <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#39;red&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&#39;infected&#39;</span><span class="p">)</span>
-<span class="n">unaffected_lab</span> <span class="o">=</span> <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#39;green&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&#39;unaffected&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="p">[</span><span class="n">infected_lab</span><span class="p">,</span> <span class="n">unaffected_lab</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="c">#where it began</span>
+<div class=" highlight hl-ipython2"><pre><span class="n">network1</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+<span class="n">network1</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&quot;C&quot;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">network1</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">network1</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">)])</span>
+<span class="n">network1a</span> <span class="o">=</span> <span class="n">network1</span><span class="o">.</span><span class="n">to_undirected</span><span class="p">()</span>
+<span class="n">limited_infection</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="n">network1a</span><span class="p">)</span>
+<span class="c">#expect all nodes except &#39;a&#39; to be infected</span>
+<span class="n">visualize_infected_network</span><span class="p">(</span><span class="n">network1</span><span class="p">,</span> <span class="n">network1a</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -960,210 +719,198 @@ div#notebook {
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[38]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>&lt;matplotlib.legend.Legend at 0x10748c990&gt;</pre>
-</div>
-
-</div>
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>/Users/lilyzhang/anaconda/lib/python2.7/site-packages/matplotlib/collections.py:590: FutureWarning: elementwise comparison failed; returning scalar instead, but in the future will perform elementwise comparison
-  if self._edgecolors == str(&apos;face&apos;):
-</pre>
-</div>
-</div>
-
 <div class="output_area"><div class="prompt"></div>
 
 
 <div class="output_png output_subarea ">
 <img src="data:image/png;base64,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
-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
+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
+YRT8IiIJ8/9+ehOeIbnU2AAAAABJRU5ErkJggg==
 "
 >
 </div>
@@ -1183,7 +930,7 @@ JGEU/CIiCaPgFxFJmP8PKl7bBe8eNHMAAAAASUVORK5CYII=
 <ol>
 <li>Improve the algorithm in limited_infection() to be more efficient and also allow leeway from the exact threshold. In the end, the purpose of limited infection for A/B testing is not necessarily to infect an exact number of users, but to get roughly appropriate sizes for the treatment and control groups. </li>
 <li>Oftentimes, we want to test not just one feature, but multiple versions of that specific feature (if, for example, the infection is used to test out multiple versions of a feature). Thus, I would also like to create a new version of limited_infection() that allows for this so that one would be able to conduct multiple comparisons.</li>
-<li>Make the arrows in the visualizations more nice-looking, since they are currently just stubs.</li>
+<li>Make the arrows in the visualizations more nice-looking, since they are currently just stubs. I would also look into generating larger, possibly randomly-generated graphs to play around with in my visualizations.</li>
 </ol>
 
 </div>

@@ -3,7 +3,7 @@
 
 # ###Khan Academy Infection
 
-# In[3]:
+# In[4]:
 
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -15,16 +15,17 @@ get_ipython().magic(u'matplotlib inline')
 
 # ###Part 1: Total Infection
 # 
-# Here we assume that students are only connected to their coaches and coaches are only connected to their students. Thus, we model this as a simple, undirected graph. We know that:
+# Here we assume that students are only connected to their coaches and coaches are only connected to their students. Thus, while we could model the coaching relationships via a directed graph, for purposes of the infection we model this as a undirected graph. We know that:
 # 1. If B coaches C, then C should get the new feature as well. 
 # 2. Infections are transferred by both the “coaches” and “is coached by” relations.
 # 
 # Thus, if someone is infected, so is everyone he/she is connected to in the graph. This is the case recursively until we have all the nodes in an entire connected component infected.
 
-# In[107]:
+# In[2]:
 
 def total_infection(user, network):
-    """infect every node in the connected component containing the user specified"""
+    """ infect every node in the connected component containing the user specified"""
+    """ takes an undirected graph as input """
     try:
         #infect the user
         network.node[user]['infected'] = True
@@ -35,71 +36,6 @@ def total_infection(user, network):
         # only run total_infection() on uninfected neighbors; otherwise, infinite loop
         if network.node[neighbor]['infected'] == False:
             total_infection(neighbor, network)
-
-
-# ##Testing, total_infection()
-# Now we run a test case, assuming that the only connections are coaching ones. While the coaching relationship could be modeled through a directed graph with arrows pointing from the coach to the student, we model the network at the moment as an undirected graph because it functions as such in the case of the infections.
-
-# In[104]:
-
-#Testing Part 1
-#Create a directed graph to model the coaching relationships (for use in the visualizations)
-network=nx.DiGraph()
-network.add_nodes_from(["A","B","C"], infected=False)
-network.add_nodes_from(['a','b','c','d','e'], infected=False)
-network.add_edges_from([("A",'b'), ('A','c'), ("B",'b'),("B",'c'),("C",'d'),("C",'e')])
-#create a deep copy of an undirected graph for use in the function total_infection()
-networka = network.to_undirected()
-total_infection("A",networka)
-#output the results
-#expect "A", "B", 'b', 'c' to be infected
-networka.nodes(True)
-
-
-# In[105]:
-
-#Testing Part 2
-network=nx.DiGraph()
-network.add_nodes_from(["A","B","C"], infected=False)
-network.add_nodes_from(['a','b','c','d','e'], infected=False)
-network.add_edges_from([("A",'b'), ('A','c'), ("B",'b'),("B",'c'),("C",'d'),("C",'e')])
-#create a deep copy of an undirected graph for use in the function total_infection()
-networka = network.to_undirected()
-total_infection("a",networka)
-#expect 'a' to be infected
-networka.nodes(True)
-
-
-# In[106]:
-
-#Testing Part 3
-network=nx.DiGraph()
-network.add_nodes_from(["A","B","C"], infected=False)
-network.add_nodes_from(['a','b','c','d','e'], infected=False)
-network.add_edges_from([("A",'b'), ('A','c'), ("B",'b'),("B",'c'),("C",'d'),("C",'e')])
-#create a deep copy of an undirected graph for use in the function total_infection()
-networka = network.to_undirected()
-total_infection("C",networka)
-#expect "C", 'd', 'e' to be infected
-networka.nodes(True)
-
-
-# In[108]:
-
-#Testing Part 3
-network=nx.DiGraph()
-network.add_nodes_from(["A","B","C"], infected=False)
-network.add_nodes_from(['a','b','c','d','e'], infected=False)
-network.add_edges_from([("A",'b'), ('A','c'), ("B",'b'),("B",'c'),("C",'d'),("C",'e')])
-#create a deep copy of an undirected graph for use in the function total_infection()
-networka = network.to_undirected()
-total_infection("Z",networka)
-#expect an error saying user not in network. No nodes are infected.
-
-
-# In[109]:
-
-networka.nodes(True)
 
 
 # ###Part 2: Limited Infection
@@ -119,7 +55,7 @@ networka.nodes(True)
 #     
 # At every point in Step 1 and 2, we check to see if the connected component or combination of connected components is equal to the infection size. If so, we infect the nodes in all the connected component(s). If we have iterated through all the connected components and possible combinations and none of these sums is equal to the value we want, the function does nothing and returns "Not able to infect exact number of users."
 
-# In[100]:
+# In[13]:
 
 def _find_connected_component(cmpts, user, network):
     """works recursively to find all the nodes in the connected component"""
@@ -188,15 +124,14 @@ def limited_infection(infect_num, network):
         _infect_cmpt(network, cmpts_list, num_list, num_cmpts)
         return "Successfully infected single component of size %s." % infect_num
     
-    
     ### Step 1: find all the connected components in the network
     
-    while num_tested <= network_length:
+    while num_tested < network_length:
         #flatten the list of lists to a list to iterate
         flattened_list = [cmpt for cmpts in cmpts_list for cmpt in cmpts]
         #find a random user from another component of the network not already looked at
         while random_user in flattened_list:
-            random_user = np.random.choice(all_nodes)
+            random_user = np.random.choice(list(set(all_nodes) - set(flattened_list)))
         #find the connectd component the user belongs to
         cmpts = _find_connected_component([],random_user, network)
         num_cmpts = len(cmpts)
@@ -209,7 +144,6 @@ def limited_infection(infect_num, network):
             return "Successfully infected single component of size %s." % infect_num
         #increase the counter keeping track of the nodes accounted for in the iterations
         num_tested +=num_cmpts
-        
     
     ### Step 2: iterate through combinations of connected components 
     ### to find one that satisfies the constraints
@@ -242,12 +176,65 @@ def limited_infection(infect_num, network):
     return "Not able to infect exact number of users."                                
 
 
-# ##Testing, limited_infection()
-# We use a similarly structured graph for our testing this time as well.
+# ###Optional Part 3: Visualization
+# 
+# The following is a visualization of the network after the implementation of full_infection(). This visualization uses the Fruchterman-Reingold force-directed algorithm, where the red nodes denote infected and green nodes unaffected.
 
-# In[89]:
+# In[14]:
 
-#Test Part 1
+def visualize_infected_network(network, networka):
+    """ here we use information from both the pre-infection directed graph
+        and the post-infection undirected graph, taking the node data from 
+        networka (post-infection) and the edge data from network (pre-infection)"""
+    #Position nodes using Fruchterman-Reingold force-directed algorithm
+    pos=nx.spring_layout(networka)
+
+    node_color = []
+    #determine the sequence of colors for the nodes
+    for node in networka.nodes(data=True):
+        #infected nodes are red
+        if node[1]['infected']:
+            node_color.append('r')
+        #uninfected nodes are green
+        else:
+            node_color.append('g')
+
+    nx.draw_networkx_nodes(networka, pos,node_color=node_color)
+    nx.draw_networkx_edges(network,pos,arrows=True)
+
+    #disregard matplotlib warning (known issue)
+    import warnings
+    warnings.filterwarnings("ignore")
+    
+    plt.axis('off')
+    plt.title('Visualization of the test network after infection')
+
+    #create a legend
+    infected_lab = mpatches.Patch(color='red', label='infected')
+    unaffected_lab = mpatches.Patch(color='green', label='unaffected')
+    plt.legend(handles=[infected_lab, unaffected_lab], loc=0)
+
+
+# Here we visualize an infected network after a call to total_infection().
+
+# In[14]:
+
+#Create a directed graph to model the coaching relationships (for use in the visualizations)
+network=nx.DiGraph()
+network.add_nodes_from(["A","B","C"], infected=False)
+network.add_nodes_from(['a','b','c','d','e'], infected=False)
+network.add_edges_from([("A",'b'), ('A','c'), ("B",'b'),("B",'c'),("C",'d'),("C",'e')])
+#create a deep copy of an undirected graph for use in the function total_infection()
+networka = network.to_undirected()
+total_infection("A",networka)
+#expect "A", "B", 'b', 'c' to be infected
+visualize_infected_network(network, networka)
+
+
+# Here we visualize an infected network after a call to limited_infection().
+
+# In[42]:
+
 network1=nx.DiGraph()
 network1.add_nodes_from(["A","B","C"], infected=False)
 network1.add_nodes_from(['a','b','c','d','e'], infected=False)
@@ -255,100 +242,7 @@ network1.add_edges_from([("A",'b'), ('A','c'), ("B",'b'),("B",'c'),("C",'d'),("C
 network1a = network1.to_undirected()
 limited_infection(7,network1a)
 #expect all nodes except 'a' to be infected
-network1a.nodes(True)
-
-
-# In[101]:
-
-#Test Part 2
-network1=nx.DiGraph()
-network1.add_nodes_from(["A","B","C"], infected=False)
-network1.add_nodes_from(['a','b','c','d','e'], infected=False)
-network1.add_edges_from([("A",'b'), ('A','c'), ("B",'b'),("B",'c'),("C",'d'),("C",'e')])
-network1a = network1.to_undirected()
-limited_infection(1,network1a)
-#expect 'a' to be infected
-network1a.nodes(True)
-
-
-# In[68]:
-
-#Test Part 3
-network1=nx.DiGraph()
-network1.add_nodes_from(["A","B","C"], infected=False)
-network1.add_nodes_from(['a','b','c','d','e'], infected=False)
-network1.add_edges_from([("A",'b'), ('A','c'), ("B",'b'),("B",'c'),("C",'d'),("C",'e')])
-network1a = network1.to_undirected()
-limited_infection(6,network1a)
-#expect a no nodes to be infected
-network1a.nodes(True)
-
-
-# In[90]:
-
-#Test Part 4
-network1=nx.DiGraph()
-network1.add_nodes_from(["A","B","C"], infected=False)
-network1.add_nodes_from(['a','b','c','d','e'], infected=False)
-network1.add_edges_from([("A",'b'), ('A','c'), ("B",'b'),("B",'c'),("C",'d'),("C",'e')])
-network1a = network1.to_undirected()
-limited_infection(4,network1a)
-#expect either "A","B",'b','c' to be infected and "C",'d','e','a' to be unaffected
-#or vice versa
-network1a.nodes(True)
-
-
-# In[110]:
-
-#Test Part 4
-network1=nx.DiGraph()
-network1.add_nodes_from(["A","B","C"], infected=False)
-network1.add_nodes_from(['a','b','c','d','e'], infected=False)
-network1.add_edges_from([("A",'b'), ('A','c'), ("B",'b'),("B",'c'),("C",'d'),("C",'e')])
-network1a = network1.to_undirected()
-limited_infection(10,network1a)
-#expect an error to say the desired size of infection is larger than the network.
-#No nodes are infected
-
-
-# In[111]:
-
-network1a.nodes(True)
-
-
-# ###Visualization
-# 
-# The following is a visualization of the network after the implementation of full_infection(). This visualization uses the Fruchterman-Reingold force-directed algorithm, where the red nodes denote infected and green nodes unaffected.
-
-# In[38]:
-
-#note: here we use information from both the pre-infection directed graph and the post-infection undirected graph
-#specifically, we take the node data from networka and the edge data from network
-
-#Position nodes using Fruchterman-Reingold force-directed algorithm
-pos=nx.spring_layout(networka)
-
-node_color = []
-#determine the sequence of colors for the nodes
-for node in networka.nodes(data=True):
-    #infected nodes are red
-    if node[1]['infected']:
-        node_color.append('r')
-    #uninfected nodes are green
-    else:
-        node_color.append('g')
-
-nx.draw_networkx_nodes(networka, pos,node_color=node_color)
-nx.draw_networkx_edges(network,pos,arrows=True)
-plt.axis('off')
-plt.title('Visualization of the test network after total infection')
-
-
-#create a legend
-infected_lab = mpatches.Patch(color='red', label='infected')
-unaffected_lab = mpatches.Patch(color='green', label='unaffected')
-plt.legend(handles=[infected_lab, unaffected_lab], loc=0)
-#where it began
+visualize_infected_network(network1, network1a)
 
 
 # ###To do with extra time
@@ -357,4 +251,4 @@ plt.legend(handles=[infected_lab, unaffected_lab], loc=0)
 # 
 # 1. Improve the algorithm in limited_infection() to be more efficient and also allow leeway from the exact threshold. In the end, the purpose of limited infection for A/B testing is not necessarily to infect an exact number of users, but to get roughly appropriate sizes for the treatment and control groups. 
 # 2. Oftentimes, we want to test not just one feature, but multiple versions of that specific feature (if, for example, the infection is used to test out multiple versions of a feature). Thus, I would also like to create a new version of limited_infection() that allows for this so that one would be able to conduct multiple comparisons.
-# 3. Make the arrows in the visualizations more nice-looking, since they are currently just stubs.
+# 3. Make the arrows in the visualizations more nice-looking, since they are currently just stubs. I would also look into generating larger, possibly randomly-generated graphs to play around with in my visualizations.
