@@ -11,9 +11,11 @@ My project is as follows:
 3. In addition, I also optionally created an **visualization** of a sample network after a call to total_infection.
 
 ### Next steps
-If I spent more time, I would improve my version of limited_infection() as well as my visualization. Regarding limited_infection(), I would increase the efficiency and organization of limited_infection(); allow the number of nodes infected to lie within a range instead of reaching an exact number; and allow the infection of different versions of a feature on the network for use, say, in multiple comparisons in A/B testing. Regarding the visualization, I would create a function that would generalize to any graph after both total_infection() and limited_infection(). I would also organize my project by separating out the testing from the functions and creating completely automated testing. More information about my code, algorithms, and future thoughts can be found in my iPython Notebook.
+If I spent more time, I would improve my version of limited_infection() as well as my visualization. Regarding limited_infection(), I would increase the efficiency and organization of limited_infection(); allow the number of nodes infected to lie within a range instead of reaching an exact number; and allow the infection of different versions of a feature on the network for use, say, in multiple comparisons in A/B testing. Regarding the visualization, I would try it on a larger network and improve aesthetics/interactivity. I would also create a suite of automated tests. More information about my code, algorithms, and future thoughts can be found in my iPython Notebook.
 
-###### Setup
+### How to Read
+
+In Github, you can view all my work in **Khan_Academy_Infection.ipynb**. Tests are located in **Khan_infection_tests.ipynb**.
 
 I submitted my project in a iPython Notebook (.ipynb) format, as well as in corresponding .html and .py formats.  For best viewing, you can see the entirety of my project via the iPython Notebook, including the output of the programmed cells and inline visualizations.
 
