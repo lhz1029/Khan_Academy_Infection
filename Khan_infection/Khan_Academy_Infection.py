@@ -1,6 +1,8 @@
 
 # coding: utf-8
 
+# ###Khan Academy Infection
+
 # In[1]:
 
 import networkx as nx
@@ -17,15 +19,14 @@ get_ipython().magic(u'matplotlib inline')
 # 1. If B coaches C, then C should get the new feature as well. 
 # 2. Infections are transferred by both the “coaches” and “is coached by” relations.
 # 
-# Thus, if someone is infected, so is everyone he/she is connected to in the graph. This is the case recursively until we have an entire connected component.
+# Thus, if someone is infected, so is everyone he/she is connected to in the graph. This is the case recursively until we have all the nodes in an entire connected component infected.
 
-# In[126]:
+# In[28]:
 
 def total_infection(user, network):
     #infect the user
     network.node[user]['infected'] = True
     neighbors = network.neighbors(user)
-    print neighbors
     for neighbor in neighbors:
         # only run total_infection() on uninfected neighbors; otherwise, infinite loop
         if network.node[neighbor]['infected'] == False:
@@ -34,7 +35,7 @@ def total_infection(user, network):
 
 # Now we run a test case, assuming that the only connections are coaching ones. While the coaching relationship could be modeled through a directed graph with arrows pointing from the coach to the student, we model the network at the moment as an undirected graph because it functions as such in the case of the infections.
 
-# In[132]:
+# In[29]:
 
 #Create a directed graph to model the coaching relationships (for use in the visualizations)
 network=nx.DiGraph()
@@ -45,7 +46,7 @@ network.add_edges_from([("A",'b'), ('A','c'), ("B",'b'),("B",'c'),("C",'d'),("C"
 networka = network.to_undirected()
 
 
-# In[133]:
+# In[30]:
 
 total_infection("A",networka)
 #output the results
@@ -54,46 +55,22 @@ networka.nodes(True)
 
 # ###Part 2: Limited Infection
 
-# Since the point of an infection would be to be able to A/B test while not grossly harming users' experiences, instead of infecting based on an arbitrary threshold starting from a random user, we first analyse the graph itself to choose our parameters for limited_infection().
+# We need to satisfy two criteria to make an effective limited_infection(). First, we want to make sure we have appropriate-sized group(s) to roll out a feature. Second, we want to make sure we are not harming users' experiences and thus want to keep all connected components in tact (i.e. all users in a connected component either have or do not have the infection).
 # 
-# We imagine the graph of our users to look like a graph made of several connected components (with the exception of a graph where all the users are connected; however, as specified in the prompt, this is pretty unrealistic). We measure the number of nodes (i.e. users) in a connected component before determining if we want to infect the entire connected component (based on whether the size of the connected component is within a certain threshold range). If it is not, we measure the size of the next connected component. When we have found an appropriate connected component (or combination of connected components), we infect all the nodes in that component/those components. If we do not find an appropriate sized connected component (or combination of connected components), the function fails.
+# We imagine the graph of our users to look like a graph made of several distinct connected components (with the exception of a graph where all the users are connected; however, as specified in the prompt, this is pretty unrealistic). We want to find a connected component or combination of connected components that sum up to a specific value we dictate. The algorithm works as follows:
 # 
-# This ensures that a coach and all his/her students will have a feature, while also allowing for a reasonable size of the treatment (and control) group in the A/B test.
+# 1. We iterate through every connected component and measure each of their sizes (i.e.the number of nodes, or users). If any one component has as many nodes as the number we want to infect, we infect all the nodes in that component.
+# 2. If none of the individual components has the exact size, we then look at combinations of components. We do this by sorting the components by size and combining the as such:
+# 
+#     [1,2,3] #list of component sizes<br />
+#     We then combine them in the following way:<br />
+#     [[1]]<br />
+#     [[1],[1,2],[2]]<br />
+#     [[1],[1,2],[2],[1,3],[1,2,3],[2,3],[3]]<br />
+#     
+# 3. If any combination of components has a sum number of nodes equal to the value we want, we infect the nodes in all those connected components. If we have iterated through all the possible combinations and none of these sums is equal to the value we want, the function does nothing and returns "Not able to infect exact number of users."
 
-# In[17]:
-
-#need to have multiple components to add up to the threshold
-def find_connected_component(cmpts, user, network):
-    cmpts.append(user)
-    neighbors = network.neighbors(user)
-    for neighbor in neighbors:
-        if neighbor not in cmpts:
-            cmpts = find_connected_component(cmpts,neighbor, network)
-    return cmpts
-        
-
-def limited_infection(min_threshold, max_threshold, network):
-    #find an appropriate connected component with find_connected_network
-    user = np.random.choice(network.nodes())
-    cmpts = find_connected_component([],user, network)
-    num_cmpts = len(cmpts)
-    num_tested = num_cmpts
-    network_length = len(network.nodes())
-    #split the min and max
-    while num_cmpts < min_threshold or num_cmpts > max_threshold:
-        #if no connected components meet this criteria and we have iterated through all of them
-        if num_tested==network_length:
-            raise ValueError("Limited infection not possible for this network.")
-        while user in cmpts:
-            user = np.random.choice(network.nodes())
-        cmpts = find_connected_component([],user, network)
-        num_cmpts = len(cmpts)
-        num_tested +=num_cmpts
-    #set the attributes of the nodes in the first connected component that satisfies the constraints
-    nx.set_node_attributes(network, "infected", dict(zip(cmpts, np.repeat(True,num_cmpts))))
-
-
-# In[6]:
+# In[41]:
 
 #works recursively to find all the nodes in the connected component
 def find_connected_component(cmpts, user, network):
@@ -106,7 +83,8 @@ def find_connected_component(cmpts, user, network):
         
     
 #if a combination summing to the infection size is found, return the component sizes 
-#otherwise, return sub_sums with the new subsum combinations appended to the list of lists
+#otherwise, return a list of lists (i.e. sub_sums) 
+#with a new list element (i.e. subsequence of connected components) appended
 def add_to_sub_sums(num, sub_sums, infect_num):
     for sub_sum in sub_sums:
         #if the combination does sum up to the infection size, return the component sizes
@@ -118,13 +96,14 @@ def add_to_sub_sums(num, sub_sums, infect_num):
             sub_sums.append(sub_sum.extend([num]))
     return sub_sums
 
-#infect a component given the component size
+#infect a connected component given its size (i.e. number of nodes)
 def infect_cmpt(network, cmpts_list, num_list, num):
     cmpts_to_infect = cmpts_list[num_list.index(num)]
     nx.set_node_attributes(network, "infected", dict(zip(cmpts_to_infect, np.repeat(True,len(cmpts_to_infect)))))
 
 #this function finds all connected components and their sizes
-#then finds an appropriate combination of connected components to infect (the first combination that works)
+#then finds an appropriate combination of connected components to infect 
+#(specifically, the first combination that works)
 def limited_infection(infect_num, network):
     network_length = len(network.nodes())
     if infect_num > network_length:
@@ -132,16 +111,19 @@ def limited_infection(infect_num, network):
     #start with a connected component from a random user
     user = np.random.choice(network.nodes())
     cmpts = find_connected_component([],user, network)
+    #this is a list of lists for the connected components
+    cmpts_list = [cmpts]
     num_cmpts = len(cmpts)
+    #this is a list for the sizes of the connected components
+    num_list = [num_cmpts]
+
+    #if the size of the component is exactly the infection size, infect the component
+    if num_cmpts == infect_num:
+        infect_cmpt(network, cmpts_list, num_list, num_cmpts)
+        return "Successfully infected component."
     #this counter keeps track of how many nodes we have already looked at
     num_tested = num_cmpts
     
-    
-    #create two lists storing the connected components and their lengths
-    #this is a list of lists for the connected components
-    cmpts_list = [cmpts]
-    #this is a list for the sizes
-    num_list = [num_cmpts]
     
     #find all the connected components in the network
     while num_tested < network_length:
@@ -153,6 +135,10 @@ def limited_infection(infect_num, network):
         #find the connectd component the user belongs to
         cmpts = find_connected_component([],user, network)
         num_cmpts = len(cmpts)
+        #if the size of the component is exactly the infection size, infect the component
+        if num_cmpts == infect_num:
+            infect_cmpt(network, cmpts_list, num_list, num_cmpts)
+            return "Successfully infected component."
         #increase the counter keeping track of the nodes accounted for in the iterations
         num_tested +=num_cmpts
         #append the connected components and their sizes to the list
@@ -185,14 +171,13 @@ def limited_infection(infect_num, network):
                 return "Successfully infected components"
         #add num by itself as a combination to sub_sum
         sub_sums.append([num])
-    print "sub_sums", sub_sums
     #if out of the loop, there is no combination summing exactly to the infection sum
     return "Not able to infect exact number of users."                                
 
 
 # We use a similarly structured graph for our testing this time as well.
 
-# In[7]:
+# In[46]:
 
 network1=nx.DiGraph()
 network1.add_nodes_from(["A","B","C"], infected=False)
@@ -201,12 +186,12 @@ network1.add_edges_from([("A",'b'), ('A','c'), ("B",'b'),("B",'c'),("C",'d'),("C
 network1a = network1.to_undirected()
 
 
-# In[8]:
+# In[47]:
 
-limited_infection(4,network1a)
+limited_infection(3,network1a)
 
 
-# In[9]:
+# In[48]:
 
 network1a.nodes(True)
 
@@ -215,7 +200,7 @@ network1a.nodes(True)
 # 
 # The following is a visualization of the network after the implementation of full_infection(). This visualization uses the Fruchterman-Reingold force-directed algorithm, where the red nodes denote infected and green nodes unaffected.
 
-# In[149]:
+# In[38]:
 
 #note: here we use information from both the pre-infection directed graph and the post-infection undirected graph
 #specifically, we take the node data from networka and the edge data from network
@@ -249,10 +234,7 @@ plt.legend(handles=[infected_lab, unaffected_lab], loc=0)
 # ###To do with extra time
 # 
 # With extra time, I would love to:
-#     1. Improve the algorithm in limited_infection() to be more efficient and also allow leeway from the exact
-#     threshold. In the end, the purpose of limited infection for A/B testing is not necessarily to infect an exact
-#     number of users, but to get roughly appropriate sizes for the treatment and control groups. 
-#     2. Oftentimes, we want to test not just one feature, but multiple versions of that specific feature. Thus, I
-#     would also like to create a new version of limited_infection() that allows for this so that one would be able to 
-#     conduct multiple comparisons.
-#     3. Make the arrows in the visualizations more nice-looking, since they are currently just stubs.
+# 
+# 1. Improve the algorithm in limited_infection() to be more efficient and also allow leeway from the exact threshold. In the end, the purpose of limited infection for A/B testing is not necessarily to infect an exact number of users, but to get roughly appropriate sizes for the treatment and control groups. 
+# 2. Oftentimes, we want to test not just one feature, but multiple versions of that specific feature (if, for example, the infection is used to test out multiple versions of a feature). Thus, I would also like to create a new version of limited_infection() that allows for this so that one would be able to conduct multiple comparisons.
+# 3. Make the arrows in the visualizations more nice-looking, since they are currently just stubs.

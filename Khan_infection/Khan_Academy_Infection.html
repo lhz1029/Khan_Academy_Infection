@@ -172,6 +172,15 @@ div#notebook {
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
 
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Khan-Academy-Infection">Khan Academy Infection<a class="anchor-link" href="#Khan-Academy-Infection">&#182;</a></h3>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
@@ -200,21 +209,20 @@ div#notebook {
 <li>If B coaches C, then C should get the new feature as well. </li>
 <li>Infections are transferred by both the “coaches” and “is coached by” relations.</li>
 </ol>
-<p>Thus, if someone is infected, so is everyone he/she is connected to in the graph. This is the case recursively until we have an entire connected component.</p>
+<p>Thus, if someone is infected, so is everyone he/she is connected to in the graph. This is the case recursively until we have all the nodes in an entire connected component infected.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[126]:</div>
+<div class="prompt input_prompt">In&nbsp;[28]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="k">def</span> <span class="nf">total_infection</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">network</span><span class="p">):</span>
     <span class="c">#infect the user</span>
     <span class="n">network</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">user</span><span class="p">][</span><span class="s">&#39;infected&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="n">neighbors</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
-    <span class="k">print</span> <span class="n">neighbors</span>
     <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="n">neighbors</span><span class="p">:</span>
         <span class="c"># only run total_infection() on uninfected neighbors; otherwise, infinite loop</span>
         <span class="k">if</span> <span class="n">network</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">neighbor</span><span class="p">][</span><span class="s">&#39;infected&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
@@ -238,7 +246,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[132]:</div>
+<div class="prompt input_prompt">In&nbsp;[29]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c">#Create a directed graph to model the coaching relationships (for use in the visualizations)</span>
@@ -257,7 +265,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[133]:</div>
+<div class="prompt input_prompt">In&nbsp;[30]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="n">total_infection</span><span class="p">(</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="n">networka</span><span class="p">)</span>
@@ -273,17 +281,7 @@ div#notebook {
 <div class="output">
 
 
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>[&apos;c&apos;, &apos;b&apos;]
-[&apos;A&apos;, &apos;B&apos;]
-[&apos;c&apos;, &apos;b&apos;]
-[&apos;A&apos;, &apos;B&apos;]
-</pre>
-</div>
-</div>
-
-<div class="output_area"><div class="prompt output_prompt">Out[133]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[30]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -317,57 +315,27 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Since the point of an infection would be to be able to A/B test while not grossly harming users' experiences, instead of infecting based on an arbitrary threshold starting from a random user, we first analyse the graph itself to choose our parameters for limited_infection().</p>
-<p>We imagine the graph of our users to look like a graph made of several connected components (with the exception of a graph where all the users are connected; however, as specified in the prompt, this is pretty unrealistic). We measure the number of nodes (i.e. users) in a connected component before determining if we want to infect the entire connected component (based on whether the size of the connected component is within a certain threshold range). If it is not, we measure the size of the next connected component. When we have found an appropriate connected component (or combination of connected components), we infect all the nodes in that component/those components. If we do not find an appropriate sized connected component (or combination of connected components), the function fails.</p>
-<p>This ensures that a coach and all his/her students will have a feature, while also allowing for a reasonable size of the treatment (and control) group in the A/B test.</p>
+<p>We need to satisfy two criteria to make an effective limited_infection(). First, we want to make sure we have appropriate-sized group(s) to roll out a feature. Second, we want to make sure we are not harming users' experiences and thus want to keep all connected components in tact (i.e. all users in a connected component either have or do not have the infection).</p>
+<p>We imagine the graph of our users to look like a graph made of several distinct connected components (with the exception of a graph where all the users are connected; however, as specified in the prompt, this is pretty unrealistic). We want to find a connected component or combination of connected components that sum up to a specific value we dictate. The algorithm works as follows:</p>
+<ol>
+<li>We iterate through every connected component and measure each of their sizes (i.e.the number of nodes, or users). If any one component has as many nodes as the number we want to infect, we infect all the nodes in that component.</li>
+<li><p>If none of the individual components has the exact size, we then look at combinations of components. We do this by sorting the components by size and combining the as such:</p>
+<p>[1,2,3] #list of component sizes<br />
+ We then combine them in the following way:<br />
+ [[1]]<br />
+ [[1],[1,2],[2]]<br />
+ [[1],[1,2],[2],[1,3],[1,2,3],[2,3],[3]]<br /></p>
+</li>
+<li><p>If any combination of components has a sum number of nodes equal to the value we want, we infect the nodes in all those connected components. If we have iterated through all the possible combinations and none of these sums is equal to the value we want, the function does nothing and returns "Not able to infect exact number of users."</p>
+</li>
+</ol>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="c">#need to have multiple components to add up to the threshold</span>
-<span class="k">def</span> <span class="nf">find_connected_component</span><span class="p">(</span><span class="n">cmpts</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">network</span><span class="p">):</span>
-    <span class="n">cmpts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
-    <span class="n">neighbors</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="n">neighbors</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">neighbor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cmpts</span><span class="p">:</span>
-            <span class="n">cmpts</span> <span class="o">=</span> <span class="n">find_connected_component</span><span class="p">(</span><span class="n">cmpts</span><span class="p">,</span><span class="n">neighbor</span><span class="p">,</span> <span class="n">network</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">cmpts</span>
-        
-
-<span class="k">def</span> <span class="nf">limited_infection</span><span class="p">(</span><span class="n">min_threshold</span><span class="p">,</span> <span class="n">max_threshold</span><span class="p">,</span> <span class="n">network</span><span class="p">):</span>
-    <span class="c">#find an appropriate connected component with find_connected_network</span>
-    <span class="n">user</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">())</span>
-    <span class="n">cmpts</span> <span class="o">=</span> <span class="n">find_connected_component</span><span class="p">([],</span><span class="n">user</span><span class="p">,</span> <span class="n">network</span><span class="p">)</span>
-    <span class="n">num_cmpts</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cmpts</span><span class="p">)</span>
-    <span class="n">num_tested</span> <span class="o">=</span> <span class="n">num_cmpts</span>
-    <span class="n">network_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">())</span>
-    <span class="c">#split the min and max</span>
-    <span class="k">while</span> <span class="n">num_cmpts</span> <span class="o">&lt;</span> <span class="n">min_threshold</span> <span class="ow">or</span> <span class="n">num_cmpts</span> <span class="o">&gt;</span> <span class="n">max_threshold</span><span class="p">:</span>
-        <span class="c">#if no connected components meet this criteria and we have iterated through all of them</span>
-        <span class="k">if</span> <span class="n">num_tested</span><span class="o">==</span><span class="n">network_length</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Limited infection not possible for this network.&quot;</span><span class="p">)</span>
-        <span class="k">while</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">cmpts</span><span class="p">:</span>
-            <span class="n">user</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">())</span>
-        <span class="n">cmpts</span> <span class="o">=</span> <span class="n">find_connected_component</span><span class="p">([],</span><span class="n">user</span><span class="p">,</span> <span class="n">network</span><span class="p">)</span>
-        <span class="n">num_cmpts</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cmpts</span><span class="p">)</span>
-        <span class="n">num_tested</span> <span class="o">+=</span><span class="n">num_cmpts</span>
-    <span class="c">#set the attributes of the nodes in the first connected component that satisfies the constraints</span>
-    <span class="n">nx</span><span class="o">.</span><span class="n">set_node_attributes</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="s">&quot;infected&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">cmpts</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="bp">True</span><span class="p">,</span><span class="n">num_cmpts</span><span class="p">))))</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[41]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c">#works recursively to find all the nodes in the connected component</span>
@@ -381,7 +349,8 @@ div#notebook {
         
     
 <span class="c">#if a combination summing to the infection size is found, return the component sizes </span>
-<span class="c">#otherwise, return sub_sums with the new subsum combinations appended to the list of lists</span>
+<span class="c">#otherwise, return a list of lists (i.e. sub_sums) </span>
+<span class="c">#with a new list element (i.e. subsequence of connected components) appended</span>
 <span class="k">def</span> <span class="nf">add_to_sub_sums</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">sub_sums</span><span class="p">,</span> <span class="n">infect_num</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">sub_sum</span> <span class="ow">in</span> <span class="n">sub_sums</span><span class="p">:</span>
         <span class="c">#if the combination does sum up to the infection size, return the component sizes</span>
@@ -393,13 +362,14 @@ div#notebook {
             <span class="n">sub_sums</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sub_sum</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">num</span><span class="p">]))</span>
     <span class="k">return</span> <span class="n">sub_sums</span>
 
-<span class="c">#infect a component given the component size</span>
+<span class="c">#infect a connected component given its size (i.e. number of nodes)</span>
 <span class="k">def</span> <span class="nf">infect_cmpt</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">cmpts_list</span><span class="p">,</span> <span class="n">num_list</span><span class="p">,</span> <span class="n">num</span><span class="p">):</span>
     <span class="n">cmpts_to_infect</span> <span class="o">=</span> <span class="n">cmpts_list</span><span class="p">[</span><span class="n">num_list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">num</span><span class="p">)]</span>
     <span class="n">nx</span><span class="o">.</span><span class="n">set_node_attributes</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="s">&quot;infected&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">cmpts_to_infect</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="bp">True</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">cmpts_to_infect</span><span class="p">)))))</span>
 
 <span class="c">#this function finds all connected components and their sizes</span>
-<span class="c">#then finds an appropriate combination of connected components to infect (the first combination that works)</span>
+<span class="c">#then finds an appropriate combination of connected components to infect </span>
+<span class="c">#(specifically, the first combination that works)</span>
 <span class="k">def</span> <span class="nf">limited_infection</span><span class="p">(</span><span class="n">infect_num</span><span class="p">,</span> <span class="n">network</span><span class="p">):</span>
     <span class="n">network_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">())</span>
     <span class="k">if</span> <span class="n">infect_num</span> <span class="o">&gt;</span> <span class="n">network_length</span><span class="p">:</span>
@@ -407,16 +377,19 @@ div#notebook {
     <span class="c">#start with a connected component from a random user</span>
     <span class="n">user</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">())</span>
     <span class="n">cmpts</span> <span class="o">=</span> <span class="n">find_connected_component</span><span class="p">([],</span><span class="n">user</span><span class="p">,</span> <span class="n">network</span><span class="p">)</span>
+    <span class="c">#this is a list of lists for the connected components</span>
+    <span class="n">cmpts_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">cmpts</span><span class="p">]</span>
     <span class="n">num_cmpts</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cmpts</span><span class="p">)</span>
+    <span class="c">#this is a list for the sizes of the connected components</span>
+    <span class="n">num_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">num_cmpts</span><span class="p">]</span>
+
+    <span class="c">#if the size of the component is exactly the infection size, infect the component</span>
+    <span class="k">if</span> <span class="n">num_cmpts</span> <span class="o">==</span> <span class="n">infect_num</span><span class="p">:</span>
+        <span class="n">infect_cmpt</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">cmpts_list</span><span class="p">,</span> <span class="n">num_list</span><span class="p">,</span> <span class="n">num_cmpts</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s">&quot;Successfully infected component.&quot;</span>
     <span class="c">#this counter keeps track of how many nodes we have already looked at</span>
     <span class="n">num_tested</span> <span class="o">=</span> <span class="n">num_cmpts</span>
     
-    
-    <span class="c">#create two lists storing the connected components and their lengths</span>
-    <span class="c">#this is a list of lists for the connected components</span>
-    <span class="n">cmpts_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">cmpts</span><span class="p">]</span>
-    <span class="c">#this is a list for the sizes</span>
-    <span class="n">num_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">num_cmpts</span><span class="p">]</span>
     
     <span class="c">#find all the connected components in the network</span>
     <span class="k">while</span> <span class="n">num_tested</span> <span class="o">&lt;</span> <span class="n">network_length</span><span class="p">:</span>
@@ -428,6 +401,10 @@ div#notebook {
         <span class="c">#find the connectd component the user belongs to</span>
         <span class="n">cmpts</span> <span class="o">=</span> <span class="n">find_connected_component</span><span class="p">([],</span><span class="n">user</span><span class="p">,</span> <span class="n">network</span><span class="p">)</span>
         <span class="n">num_cmpts</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cmpts</span><span class="p">)</span>
+        <span class="c">#if the size of the component is exactly the infection size, infect the component</span>
+        <span class="k">if</span> <span class="n">num_cmpts</span> <span class="o">==</span> <span class="n">infect_num</span><span class="p">:</span>
+            <span class="n">infect_cmpt</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">cmpts_list</span><span class="p">,</span> <span class="n">num_list</span><span class="p">,</span> <span class="n">num_cmpts</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s">&quot;Successfully infected component.&quot;</span>
         <span class="c">#increase the counter keeping track of the nodes accounted for in the iterations</span>
         <span class="n">num_tested</span> <span class="o">+=</span><span class="n">num_cmpts</span>
         <span class="c">#append the connected components and their sizes to the list</span>
@@ -460,7 +437,6 @@ div#notebook {
                 <span class="k">return</span> <span class="s">&quot;Successfully infected components&quot;</span>
         <span class="c">#add num by itself as a combination to sub_sum</span>
         <span class="n">sub_sums</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">num</span><span class="p">])</span>
-    <span class="k">print</span> <span class="s">&quot;sub_sums&quot;</span><span class="p">,</span> <span class="n">sub_sums</span>
     <span class="c">#if out of the loop, there is no combination summing exactly to the infection sum</span>
     <span class="k">return</span> <span class="s">&quot;Not able to infect exact number of users.&quot;</span>                                
 </pre></div>
@@ -482,7 +458,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[46]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="n">network1</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
@@ -499,10 +475,10 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[47]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="n">limited_infection</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="n">network1a</span><span class="p">)</span>
+<div class=" highlight hl-ipython2"><pre><span class="n">limited_infection</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="n">network1a</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -513,11 +489,11 @@ div#notebook {
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[8]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[47]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&apos;Successfully infected components&apos;</pre>
+<pre>&apos;Successfully infected component.&apos;</pre>
 </div>
 
 </div>
@@ -528,7 +504,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[48]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="n">network1a</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
@@ -542,12 +518,12 @@ div#notebook {
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[9]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[48]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
 <pre>[(&apos;A&apos;, {&apos;infected&apos;: False}),
- (&apos;a&apos;, {&apos;infected&apos;: True}),
+ (&apos;a&apos;, {&apos;infected&apos;: False}),
  (&apos;C&apos;, {&apos;infected&apos;: True}),
  (&apos;B&apos;, {&apos;infected&apos;: False}),
  (&apos;e&apos;, {&apos;infected&apos;: True}),
@@ -574,7 +550,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[149]:</div>
+<div class="prompt input_prompt">In&nbsp;[38]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c">#note: here we use information from both the pre-infection directed graph and the post-infection undirected graph</span>
@@ -614,13 +590,21 @@ div#notebook {
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[149]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[38]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&lt;matplotlib.legend.Legend at 0x10aa66310&gt;</pre>
+<pre>&lt;matplotlib.legend.Legend at 0x10748c990&gt;</pre>
 </div>
 
+</div>
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/Users/lilyzhang/anaconda/lib/python2.7/site-packages/matplotlib/collections.py:590: FutureWarning: elementwise comparison failed; returning scalar instead, but in the future will perform elementwise comparison
+  if self._edgecolors == str(&apos;face&apos;):
+</pre>
+</div>
 </div>
 
 <div class="output_area"><div class="prompt"></div>
@@ -628,190 +612,188 @@ div#notebook {
 
 <div class="output_png output_subarea ">
 <img src="data:image/png;base64,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
-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
+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
 "
 >
 </div>
@@ -828,14 +810,11 @@ zHLGwW9mljMOfjOznHHwm5nljIPfzCxnHPxmZjnj4DczyxkHv5lZzjj4zcxyxsFvZpYzDn4zs5xx
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="To-do-with-extra-time">To do with extra time<a class="anchor-link" href="#To-do-with-extra-time">&#182;</a></h3><p>With extra time, I would love to:</p>
-
-<pre><code>1. Improve the algorithm in limited_infection() to be more efficient and also allow leeway from the exact
-threshold. In the end, the purpose of limited infection for A/B testing is not necessarily to infect an exact
-number of users, but to get roughly appropriate sizes for the treatment and control groups. 
-2. Oftentimes, we want to test not just one feature, but multiple versions of that specific feature. Thus, I
-would also like to create a new version of limited_infection() that allows for this so that one would be able to 
-conduct multiple comparisons.
-3. Make the arrows in the visualizations more nice-looking, since they are currently just stubs.</code></pre>
+<ol>
+<li>Improve the algorithm in limited_infection() to be more efficient and also allow leeway from the exact threshold. In the end, the purpose of limited infection for A/B testing is not necessarily to infect an exact number of users, but to get roughly appropriate sizes for the treatment and control groups. </li>
+<li>Oftentimes, we want to test not just one feature, but multiple versions of that specific feature (if, for example, the infection is used to test out multiple versions of a feature). Thus, I would also like to create a new version of limited_infection() that allows for this so that one would be able to conduct multiple comparisons.</li>
+<li>Make the arrows in the visualizations more nice-looking, since they are currently just stubs.</li>
+</ol>
 
 </div>
 </div>
