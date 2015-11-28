@@ -6,5 +6,5 @@ I submitted my project in a iPython Notebook (.ipynb) format, as well as in corr
 
 To run the code on the iPython Notebook (the output from my running the code is already shown), you must first install Jupyter Notebook. Please refer to the following link for installation instructions: http://jupyter.readthedocs.org/en/latest/install.html. Otherwise, you can simply open and run the .py file since it includes all the code, with the tests and the code to call them placed right after each function. 
 
-With more time, I would love to improve my version of limited_infection() as well as my visualization. More information about my code, algorithms, and future thoughts can be found in my iPython Notebook.
+If I spent more time, I would improve my version of limited_infection() as well as my visualization. I would organize my project by separating out the testing from the functions (The iPython Notebook format proved nice in some ways, but ultimately I probably would have chosen a different environment in which to complete this project.) More information about my code, algorithms, and future thoughts can be found in my iPython Notebook.
 

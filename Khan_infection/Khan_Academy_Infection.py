@@ -3,7 +3,7 @@
 
 # ###Khan Academy Infection
 
-# In[1]:
+# In[3]:
 
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -21,11 +21,15 @@ get_ipython().magic(u'matplotlib inline')
 # 
 # Thus, if someone is infected, so is everyone he/she is connected to in the graph. This is the case recursively until we have all the nodes in an entire connected component infected.
 
-# In[28]:
+# In[107]:
 
 def total_infection(user, network):
-    #infect the user
-    network.node[user]['infected'] = True
+    """infect every node in the connected component containing the user specified"""
+    try:
+        #infect the user
+        network.node[user]['infected'] = True
+    except:
+        raise ValueError("User is not in the network.")
     neighbors = network.neighbors(user)
     for neighbor in neighbors:
         # only run total_infection() on uninfected neighbors; otherwise, infinite loop
@@ -33,10 +37,12 @@ def total_infection(user, network):
             total_infection(neighbor, network)
 
 
+# ##Testing, total_infection()
 # Now we run a test case, assuming that the only connections are coaching ones. While the coaching relationship could be modeled through a directed graph with arrows pointing from the coach to the student, we model the network at the moment as an undirected graph because it functions as such in the case of the infections.
 
-# In[29]:
+# In[104]:
 
+#Testing Part 1
 #Create a directed graph to model the coaching relationships (for use in the visualizations)
 network=nx.DiGraph()
 network.add_nodes_from(["A","B","C"], infected=False)
@@ -44,18 +50,61 @@ network.add_nodes_from(['a','b','c','d','e'], infected=False)
 network.add_edges_from([("A",'b'), ('A','c'), ("B",'b'),("B",'c'),("C",'d'),("C",'e')])
 #create a deep copy of an undirected graph for use in the function total_infection()
 networka = network.to_undirected()
-
-
-# In[30]:
-
 total_infection("A",networka)
 #output the results
+#expect "A", "B", 'b', 'c' to be infected
+networka.nodes(True)
+
+
+# In[105]:
+
+#Testing Part 2
+network=nx.DiGraph()
+network.add_nodes_from(["A","B","C"], infected=False)
+network.add_nodes_from(['a','b','c','d','e'], infected=False)
+network.add_edges_from([("A",'b'), ('A','c'), ("B",'b'),("B",'c'),("C",'d'),("C",'e')])
+#create a deep copy of an undirected graph for use in the function total_infection()
+networka = network.to_undirected()
+total_infection("a",networka)
+#expect 'a' to be infected
+networka.nodes(True)
+
+
+# In[106]:
+
+#Testing Part 3
+network=nx.DiGraph()
+network.add_nodes_from(["A","B","C"], infected=False)
+network.add_nodes_from(['a','b','c','d','e'], infected=False)
+network.add_edges_from([("A",'b'), ('A','c'), ("B",'b'),("B",'c'),("C",'d'),("C",'e')])
+#create a deep copy of an undirected graph for use in the function total_infection()
+networka = network.to_undirected()
+total_infection("C",networka)
+#expect "C", 'd', 'e' to be infected
+networka.nodes(True)
+
+
+# In[108]:
+
+#Testing Part 3
+network=nx.DiGraph()
+network.add_nodes_from(["A","B","C"], infected=False)
+network.add_nodes_from(['a','b','c','d','e'], infected=False)
+network.add_edges_from([("A",'b'), ('A','c'), ("B",'b'),("B",'c'),("C",'d'),("C",'e')])
+#create a deep copy of an undirected graph for use in the function total_infection()
+networka = network.to_undirected()
+total_infection("Z",networka)
+#expect an error saying user not in network. No nodes are infected.
+
+
+# In[109]:
+
 networka.nodes(True)
 
 
 # ###Part 2: Limited Infection
 
-# We need to satisfy two criteria to make an effective limited_infection(). First, we want to make sure we have appropriate-sized group(s) to roll out a feature. Second, we want to make sure we are not harming users' experiences and thus want to keep all connected components in tact (i.e. all users in a connected component either have or do not have the infection).
+# We need to satisfy two criteria to make an effective limited_infection(). First, we want to make sure we have appropriate-sized group(s) to roll out a feature. Second, we want to make sure we are not harming users' experiences and thus want to keep all connected components intact (i.e. all users in a connected component either have or do not have the infection).
 # 
 # We imagine the graph of our users to look like a graph made of several distinct connected components (with the exception of a graph where all the users are connected; however, as specified in the prompt, this is pretty unrealistic). We want to find a connected component or combination of connected components that sum up to a specific value we dictate. The algorithm works as follows:
 # 
@@ -63,135 +112,206 @@ networka.nodes(True)
 # 2. If none of the individual components has the exact size, we then look at combinations of components. We do this by sorting the components by size and combining the as such:
 # 
 #     [1,2,3] #list of component sizes<br />
-#     We then combine them in the following way:<br />
+#     We combine them in the following way:<br />
 #     [[1]]<br />
 #     [[1],[1,2],[2]]<br />
 #     [[1],[1,2],[2],[1,3],[1,2,3],[2,3],[3]]<br />
 #     
-# 3. If any combination of components has a sum number of nodes equal to the value we want, we infect the nodes in all those connected components. If we have iterated through all the possible combinations and none of these sums is equal to the value we want, the function does nothing and returns "Not able to infect exact number of users."
+# At every point in Step 1 and 2, we check to see if the connected component or combination of connected components is equal to the infection size. If so, we infect the nodes in all the connected component(s). If we have iterated through all the connected components and possible combinations and none of these sums is equal to the value we want, the function does nothing and returns "Not able to infect exact number of users."
 
-# In[41]:
+# In[100]:
 
-#works recursively to find all the nodes in the connected component
-def find_connected_component(cmpts, user, network):
+def _find_connected_component(cmpts, user, network):
+    """works recursively to find all the nodes in the connected component"""
     cmpts.append(user)
     neighbors = network.neighbors(user)
     for neighbor in neighbors:
         if neighbor not in cmpts:
-            cmpts = find_connected_component(cmpts,neighbor, network)
+            cmpts = _find_connected_component(cmpts,neighbor, network)
     return cmpts
         
     
-#if a combination summing to the infection size is found, return the component sizes 
-#otherwise, return a list of lists (i.e. sub_sums) 
-#with a new list element (i.e. subsequence of connected components) appended
-def add_to_sub_sums(num, sub_sums, infect_num):
+def _add_to_sub_sums(num, sub_sums, infect_num):
+    """ if a combination summing to the infection size is found, return the component sizes
+    else, return a list of lists (i.e. sub_sums) with a new list element (i.e. subsequence of 
+    connected components) appended """
+    #list of the new subsequences of connected components to append to sub_sums
+    new_combinations = []
     for sub_sum in sub_sums:
         #if the combination does sum up to the infection size, return the component sizes
-        if sum(sub_sum)+num == infect_num:
-            return [sub_sum.extend([num])]
+        if sum(sub_sum) + num == infect_num:
+            return [sub_sum+[num]]
         #else, only add the combination if the sum of the sub_sum list plus num is 
         #less than our desired infection size
         elif sum(sub_sum)+num < infect_num:
-            sub_sums.append(sub_sum.extend([num]))
+            new_sub_sum = sub_sum + [num]
+            new_combinations.append(new_sub_sum)
+    for comb in new_combinations:
+        sub_sums.append(comb)
     return sub_sums
 
-#infect a connected component given its size (i.e. number of nodes)
-def infect_cmpt(network, cmpts_list, num_list, num):
-    cmpts_to_infect = cmpts_list[num_list.index(num)]
-    nx.set_node_attributes(network, "infected", dict(zip(cmpts_to_infect, np.repeat(True,len(cmpts_to_infect)))))
 
-#this function finds all connected components and their sizes
-#then finds an appropriate combination of connected components to infect 
-#(specifically, the first combination that works)
+def _infect_cmpt(network, cmpts_list, num_list, num):
+    """infect a connected component given its size (i.e. number of nodes) """
+    cmpts_to_infect = cmpts_list[num_list.index(num)]
+    nx.set_node_attributes(network, "infected", 
+                           dict(zip(cmpts_to_infect, np.repeat(True,len(cmpts_to_infect)))))
+
 def limited_infection(infect_num, network):
-    network_length = len(network.nodes())
+    """ This function finds all connected components and their sizes
+    then infects an exact number 'infect_num' of nodes. If it can't find
+    one component of that size, it finds an appropriate combination of 
+    connected components to  infect (specifically, the first combination 
+    that works) """
+    ### Setup
+    
+    #get all nodes in the network
+    all_nodes = network.nodes()
+    #get network length
+    network_length = len(all_nodes)
     if infect_num > network_length:
         raise ValueError("The infection size exceeds the network length.")
-    #start with a connected component from a random user
-    user = np.random.choice(network.nodes())
-    cmpts = find_connected_component([],user, network)
+    #start with a random user
+    random_user = np.random.choice(all_nodes)
+    #find the user's corresponding connected component
+    cmpts = _find_connected_component([],random_user, network)
     #this is a list of lists for the connected components
     cmpts_list = [cmpts]
+    #this is the number of nodes in the connected component
     num_cmpts = len(cmpts)
-    #this is a list for the sizes of the connected components
+    #this is a list for the sizes (i.e. number of nodes) of the connected components
     num_list = [num_cmpts]
-
-    #if the size of the component is exactly the infection size, infect the component
-    if num_cmpts == infect_num:
-        infect_cmpt(network, cmpts_list, num_list, num_cmpts)
-        return "Successfully infected component."
     #this counter keeps track of how many nodes we have already looked at
     num_tested = num_cmpts
+    #if the size of the component is exactly the infection size, infect the component
+    if num_cmpts == infect_num:
+        _infect_cmpt(network, cmpts_list, num_list, num_cmpts)
+        return "Successfully infected single component of size %s." % infect_num
     
     
-    #find all the connected components in the network
-    while num_tested < network_length:
+    ### Step 1: find all the connected components in the network
+    
+    while num_tested <= network_length:
         #flatten the list of lists to a list to iterate
         flattened_list = [cmpt for cmpts in cmpts_list for cmpt in cmpts]
         #find a random user from another component of the network not already looked at
-        while user in flattened_list:
-            user = np.random.choice(network.nodes())
+        while random_user in flattened_list:
+            random_user = np.random.choice(all_nodes)
         #find the connectd component the user belongs to
-        cmpts = find_connected_component([],user, network)
+        cmpts = _find_connected_component([],random_user, network)
         num_cmpts = len(cmpts)
-        #if the size of the component is exactly the infection size, infect the component
-        if num_cmpts == infect_num:
-            infect_cmpt(network, cmpts_list, num_list, num_cmpts)
-            return "Successfully infected component."
-        #increase the counter keeping track of the nodes accounted for in the iterations
-        num_tested +=num_cmpts
         #append the connected components and their sizes to the list
         cmpts_list.append(cmpts)
         num_list.append(num_cmpts)
+        #if the size of the component is exactly the infection size, infect the component
+        if num_cmpts == infect_num:
+            _infect_cmpt(network, cmpts_list, num_list, num_cmpts)
+            return "Successfully infected single component of size %s." % infect_num
+        #increase the counter keeping track of the nodes accounted for in the iterations
+        num_tested +=num_cmpts
+        
     
-    #choose a combination of connected components that satisfy the constraints
+    ### Step 2: iterate through combinations of connected components 
+    ### to find one that satisfies the constraints
+    
     #define an empty list of the cmpts
     cmpt_list_to_infect = []
     sorted_num_list = sorted(num_list)
-    #sub_sums will be a list of lists containing the various combinations of components to add together
+    #sub_sums will be a list of lists containing the various combinations of 
+    #components to add together
     sub_sums = []
     #iterate through each connected component size
     for num in sorted_num_list:
-        #if the size of the component is exactly the infection size, infect the component
-        if num == infect_num:
-            infect_cmpt(network, cmpts_list, num_list, num)
-            return "Successfully infected component"
-        #if the connected component size is greater than the infection size we want, so must every subsequent component
+        #if the connected component size is greater than the infection size we want,
+        #so must every subsequent component
         if num > infect_num:
             break
-        #for each component size (here, num), add to sub_sum the lists of every existing combination plus num 
+        #for each component size (i.e. num)
+        #add to sub_sum the lists of every existing combination plus num 
         if sub_sums:
-            subsums = add_to_sub_sums(num, sub_sums, infect_num)
-            #if add_to_sub_sums() returns the exact combination summing to the infection size,
-            #infect those connected components
-            if len(sub_sums)==1:
+            sub_sums = _add_to_sub_sums(num, sub_sums, infect_num)
+            #if _add_to_sub_sums() returns the exact combination summing to the 
+            #infection size, infect those connected components
+            if len(sub_sums) == 1:
                 for num in sub_sums[0]:
-                    infect_cmpt(network, cmpts_list, num_list, num)
-                return "Successfully infected components"
+                    _infect_cmpt(network, cmpts_list, num_list, num)
+                return "Successfully infected multiple components of summed size %s." % infect_num
         #add num by itself as a combination to sub_sum
         sub_sums.append([num])
     #if out of the loop, there is no combination summing exactly to the infection sum
     return "Not able to infect exact number of users."                                
 
 
+# ##Testing, limited_infection()
 # We use a similarly structured graph for our testing this time as well.
 
-# In[46]:
+# In[89]:
 
+#Test Part 1
 network1=nx.DiGraph()
 network1.add_nodes_from(["A","B","C"], infected=False)
 network1.add_nodes_from(['a','b','c','d','e'], infected=False)
 network1.add_edges_from([("A",'b'), ('A','c'), ("B",'b'),("B",'c'),("C",'d'),("C",'e')])
 network1a = network1.to_undirected()
+limited_infection(7,network1a)
+#expect all nodes except 'a' to be infected
+network1a.nodes(True)
 
 
-# In[47]:
+# In[101]:
 
-limited_infection(3,network1a)
+#Test Part 2
+network1=nx.DiGraph()
+network1.add_nodes_from(["A","B","C"], infected=False)
+network1.add_nodes_from(['a','b','c','d','e'], infected=False)
+network1.add_edges_from([("A",'b'), ('A','c'), ("B",'b'),("B",'c'),("C",'d'),("C",'e')])
+network1a = network1.to_undirected()
+limited_infection(1,network1a)
+#expect 'a' to be infected
+network1a.nodes(True)
 
 
-# In[48]:
+# In[68]:
+
+#Test Part 3
+network1=nx.DiGraph()
+network1.add_nodes_from(["A","B","C"], infected=False)
+network1.add_nodes_from(['a','b','c','d','e'], infected=False)
+network1.add_edges_from([("A",'b'), ('A','c'), ("B",'b'),("B",'c'),("C",'d'),("C",'e')])
+network1a = network1.to_undirected()
+limited_infection(6,network1a)
+#expect a no nodes to be infected
+network1a.nodes(True)
+
+
+# In[90]:
+
+#Test Part 4
+network1=nx.DiGraph()
+network1.add_nodes_from(["A","B","C"], infected=False)
+network1.add_nodes_from(['a','b','c','d','e'], infected=False)
+network1.add_edges_from([("A",'b'), ('A','c'), ("B",'b'),("B",'c'),("C",'d'),("C",'e')])
+network1a = network1.to_undirected()
+limited_infection(4,network1a)
+#expect either "A","B",'b','c' to be infected and "C",'d','e','a' to be unaffected
+#or vice versa
+network1a.nodes(True)
+
+
+# In[110]:
+
+#Test Part 4
+network1=nx.DiGraph()
+network1.add_nodes_from(["A","B","C"], infected=False)
+network1.add_nodes_from(['a','b','c','d','e'], infected=False)
+network1.add_edges_from([("A",'b'), ('A','c'), ("B",'b'),("B",'c'),("C",'d'),("C",'e')])
+network1a = network1.to_undirected()
+limited_infection(10,network1a)
+#expect an error to say the desired size of infection is larger than the network.
+#No nodes are infected
+
+
+# In[111]:
 
 network1a.nodes(True)
 
@@ -233,7 +353,7 @@ plt.legend(handles=[infected_lab, unaffected_lab], loc=0)
 
 # ###To do with extra time
 # 
-# With extra time, I would love to:
+# If I were to spend more time, I would:
 # 
 # 1. Improve the algorithm in limited_infection() to be more efficient and also allow leeway from the exact threshold. In the end, the purpose of limited infection for A/B testing is not necessarily to infect an exact number of users, but to get roughly appropriate sizes for the treatment and control groups. 
 # 2. Oftentimes, we want to test not just one feature, but multiple versions of that specific feature (if, for example, the infection is used to test out multiple versions of a feature). Thus, I would also like to create a new version of limited_infection() that allows for this so that one would be able to conduct multiple comparisons.

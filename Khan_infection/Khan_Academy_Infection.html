@@ -183,7 +183,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="kn">import</span> <span class="nn">networkx</span> <span class="kn">as</span> <span class="nn">nx</span>
@@ -216,12 +216,16 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[28]:</div>
+<div class="prompt input_prompt">In&nbsp;[107]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="k">def</span> <span class="nf">total_infection</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">network</span><span class="p">):</span>
-    <span class="c">#infect the user</span>
-    <span class="n">network</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">user</span><span class="p">][</span><span class="s">&#39;infected&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="sd">&quot;&quot;&quot;infect every node in the connected component containing the user specified&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c">#infect the user</span>
+        <span class="n">network</span><span class="o">.</span><span class="n">node</span><span class="p">[</span><span class="n">user</span><span class="p">][</span><span class="s">&#39;infected&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;User is not in the network.&quot;</span><span class="p">)</span>
     <span class="n">neighbors</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="n">neighbors</span><span class="p">:</span>
         <span class="c"># only run total_infection() on uninfected neighbors; otherwise, infinite loop</span>
@@ -239,37 +243,27 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Now we run a test case, assuming that the only connections are coaching ones. While the coaching relationship could be modeled through a directed graph with arrows pointing from the coach to the student, we model the network at the moment as an undirected graph because it functions as such in the case of the infections.</p>
+<h2 id="Testing,-total_infection()">Testing, total_infection()<a class="anchor-link" href="#Testing,-total_infection()">&#182;</a></h2><p>Now we run a test case, assuming that the only connections are coaching ones. While the coaching relationship could be modeled through a directed graph with arrows pointing from the coach to the student, we model the network at the moment as an undirected graph because it functions as such in the case of the infections.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[29]:</div>
+<div class="prompt input_prompt">In&nbsp;[104]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="c">#Create a directed graph to model the coaching relationships (for use in the visualizations)</span>
+<div class=" highlight hl-ipython2"><pre><span class="c">#Testing Part 1</span>
+<span class="c">#Create a directed graph to model the coaching relationships (for use in the visualizations)</span>
 <span class="n">network</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
 <span class="n">network</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&quot;C&quot;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 <span class="n">network</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 <span class="n">network</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">)])</span>
 <span class="c">#create a deep copy of an undirected graph for use in the function total_infection()</span>
 <span class="n">networka</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">to_undirected</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[30]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="n">total_infection</span><span class="p">(</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="n">networka</span><span class="p">)</span>
+<span class="n">total_infection</span><span class="p">(</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="n">networka</span><span class="p">)</span>
 <span class="c">#output the results</span>
+<span class="c">#expect &quot;A&quot;, &quot;B&quot;, &#39;b&#39;, &#39;c&#39; to be infected</span>
 <span class="n">networka</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
 </pre></div>
 
@@ -281,7 +275,7 @@ div#notebook {
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[30]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[104]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -293,6 +287,183 @@ div#notebook {
  (&apos;d&apos;, {&apos;infected&apos;: False}),
  (&apos;c&apos;, {&apos;infected&apos;: True}),
  (&apos;b&apos;, {&apos;infected&apos;: True})]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[105]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="c">#Testing Part 2</span>
+<span class="n">network</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+<span class="n">network</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&quot;C&quot;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">network</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">network</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">)])</span>
+<span class="c">#create a deep copy of an undirected graph for use in the function total_infection()</span>
+<span class="n">networka</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">to_undirected</span><span class="p">()</span>
+<span class="n">total_infection</span><span class="p">(</span><span class="s">&quot;a&quot;</span><span class="p">,</span><span class="n">networka</span><span class="p">)</span>
+<span class="c">#expect &#39;a&#39; to be infected</span>
+<span class="n">networka</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[105]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[(&apos;A&apos;, {&apos;infected&apos;: False}),
+ (&apos;a&apos;, {&apos;infected&apos;: True}),
+ (&apos;C&apos;, {&apos;infected&apos;: False}),
+ (&apos;B&apos;, {&apos;infected&apos;: False}),
+ (&apos;e&apos;, {&apos;infected&apos;: False}),
+ (&apos;d&apos;, {&apos;infected&apos;: False}),
+ (&apos;c&apos;, {&apos;infected&apos;: False}),
+ (&apos;b&apos;, {&apos;infected&apos;: False})]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[106]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="c">#Testing Part 3</span>
+<span class="n">network</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+<span class="n">network</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&quot;C&quot;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">network</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">network</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">)])</span>
+<span class="c">#create a deep copy of an undirected graph for use in the function total_infection()</span>
+<span class="n">networka</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">to_undirected</span><span class="p">()</span>
+<span class="n">total_infection</span><span class="p">(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="n">networka</span><span class="p">)</span>
+<span class="c">#expect &quot;C&quot;, &#39;d&#39;, &#39;e&#39; to be infected</span>
+<span class="n">networka</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[106]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[(&apos;A&apos;, {&apos;infected&apos;: False}),
+ (&apos;a&apos;, {&apos;infected&apos;: False}),
+ (&apos;C&apos;, {&apos;infected&apos;: True}),
+ (&apos;B&apos;, {&apos;infected&apos;: False}),
+ (&apos;e&apos;, {&apos;infected&apos;: True}),
+ (&apos;d&apos;, {&apos;infected&apos;: True}),
+ (&apos;c&apos;, {&apos;infected&apos;: False}),
+ (&apos;b&apos;, {&apos;infected&apos;: False})]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[108]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="c">#Testing Part 3</span>
+<span class="n">network</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+<span class="n">network</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&quot;C&quot;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">network</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">network</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">)])</span>
+<span class="c">#create a deep copy of an undirected graph for use in the function total_infection()</span>
+<span class="n">networka</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">to_undirected</span><span class="p">()</span>
+<span class="n">total_infection</span><span class="p">(</span><span class="s">&quot;Z&quot;</span><span class="p">,</span><span class="n">networka</span><span class="p">)</span>
+<span class="c">#expect an error saying user not in network. No nodes are infected.</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansired">---------------------------------------------------------------------------</span>
+<span class="ansired">ValueError</span>                                Traceback (most recent call last)
+<span class="ansigreen">&lt;ipython-input-108-0a1f2af3a2ae&gt;</span> in <span class="ansicyan">&lt;module&gt;</span><span class="ansiblue">()</span>
+<span class="ansigreen">      6</span> <span class="ansired">#create a deep copy of an undirected graph for use in the function total_infection()</span><span class="ansiblue"></span><span class="ansiblue"></span>
+<span class="ansigreen">      7</span> networka <span class="ansiblue">=</span> network<span class="ansiblue">.</span>to_undirected<span class="ansiblue">(</span><span class="ansiblue">)</span><span class="ansiblue"></span>
+<span class="ansigreen">----&gt; 8</span><span class="ansired"> </span>total_infection<span class="ansiblue">(</span><span class="ansiblue">&quot;Z&quot;</span><span class="ansiblue">,</span>networka<span class="ansiblue">)</span><span class="ansiblue"></span>
+<span class="ansigreen">      9</span> <span class="ansired">#expect an error saying user not in network. No nodes are infected.</span><span class="ansiblue"></span><span class="ansiblue"></span>
+<span class="ansigreen">     10</span> networka<span class="ansiblue">.</span>nodes<span class="ansiblue">(</span>True<span class="ansiblue">)</span><span class="ansiblue"></span>
+
+<span class="ansigreen">&lt;ipython-input-107-b6f0c9ecc463&gt;</span> in <span class="ansicyan">total_infection</span><span class="ansiblue">(user, network)</span>
+<span class="ansigreen">      5</span>         network<span class="ansiblue">.</span>node<span class="ansiblue">[</span>user<span class="ansiblue">]</span><span class="ansiblue">[</span><span class="ansiblue">&apos;infected&apos;</span><span class="ansiblue">]</span> <span class="ansiblue">=</span> True<span class="ansiblue"></span>
+<span class="ansigreen">      6</span>     <span class="ansigreen">except</span><span class="ansiblue">:</span><span class="ansiblue"></span>
+<span class="ansigreen">----&gt; 7</span><span class="ansired">         </span><span class="ansigreen">raise</span> ValueError<span class="ansiblue">(</span><span class="ansiblue">&quot;User is not in the network.&quot;</span><span class="ansiblue">)</span><span class="ansiblue"></span>
+<span class="ansigreen">      8</span>     neighbors <span class="ansiblue">=</span> network<span class="ansiblue">.</span>neighbors<span class="ansiblue">(</span>user<span class="ansiblue">)</span><span class="ansiblue"></span>
+<span class="ansigreen">      9</span>     <span class="ansigreen">for</span> neighbor <span class="ansigreen">in</span> neighbors<span class="ansiblue">:</span><span class="ansiblue"></span>
+
+<span class="ansired">ValueError</span>: User is not in the network.</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[109]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="n">networka</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[109]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[(&apos;A&apos;, {&apos;infected&apos;: False}),
+ (&apos;a&apos;, {&apos;infected&apos;: False}),
+ (&apos;C&apos;, {&apos;infected&apos;: False}),
+ (&apos;B&apos;, {&apos;infected&apos;: False}),
+ (&apos;e&apos;, {&apos;infected&apos;: False}),
+ (&apos;d&apos;, {&apos;infected&apos;: False}),
+ (&apos;c&apos;, {&apos;infected&apos;: False}),
+ (&apos;b&apos;, {&apos;infected&apos;: False})]</pre>
 </div>
 
 </div>
@@ -315,126 +486,143 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We need to satisfy two criteria to make an effective limited_infection(). First, we want to make sure we have appropriate-sized group(s) to roll out a feature. Second, we want to make sure we are not harming users' experiences and thus want to keep all connected components in tact (i.e. all users in a connected component either have or do not have the infection).</p>
+<p>We need to satisfy two criteria to make an effective limited_infection(). First, we want to make sure we have appropriate-sized group(s) to roll out a feature. Second, we want to make sure we are not harming users' experiences and thus want to keep all connected components intact (i.e. all users in a connected component either have or do not have the infection).</p>
 <p>We imagine the graph of our users to look like a graph made of several distinct connected components (with the exception of a graph where all the users are connected; however, as specified in the prompt, this is pretty unrealistic). We want to find a connected component or combination of connected components that sum up to a specific value we dictate. The algorithm works as follows:</p>
 <ol>
 <li>We iterate through every connected component and measure each of their sizes (i.e.the number of nodes, or users). If any one component has as many nodes as the number we want to infect, we infect all the nodes in that component.</li>
 <li><p>If none of the individual components has the exact size, we then look at combinations of components. We do this by sorting the components by size and combining the as such:</p>
 <p>[1,2,3] #list of component sizes<br />
- We then combine them in the following way:<br />
+ We combine them in the following way:<br />
  [[1]]<br />
  [[1],[1,2],[2]]<br />
  [[1],[1,2],[2],[1,3],[1,2,3],[2,3],[3]]<br /></p>
 </li>
-<li><p>If any combination of components has a sum number of nodes equal to the value we want, we infect the nodes in all those connected components. If we have iterated through all the possible combinations and none of these sums is equal to the value we want, the function does nothing and returns "Not able to infect exact number of users."</p>
-</li>
 </ol>
+<p>At every point in Step 1 and 2, we check to see if the connected component or combination of connected components is equal to the infection size. If so, we infect the nodes in all the connected component(s). If we have iterated through all the connected components and possible combinations and none of these sums is equal to the value we want, the function does nothing and returns "Not able to infect exact number of users."</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[41]:</div>
+<div class="prompt input_prompt">In&nbsp;[100]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="c">#works recursively to find all the nodes in the connected component</span>
-<span class="k">def</span> <span class="nf">find_connected_component</span><span class="p">(</span><span class="n">cmpts</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">network</span><span class="p">):</span>
+<div class=" highlight hl-ipython2"><pre><span class="k">def</span> <span class="nf">_find_connected_component</span><span class="p">(</span><span class="n">cmpts</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">network</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;works recursively to find all the nodes in the connected component&quot;&quot;&quot;</span>
     <span class="n">cmpts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
     <span class="n">neighbors</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="n">neighbors</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">neighbor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cmpts</span><span class="p">:</span>
-            <span class="n">cmpts</span> <span class="o">=</span> <span class="n">find_connected_component</span><span class="p">(</span><span class="n">cmpts</span><span class="p">,</span><span class="n">neighbor</span><span class="p">,</span> <span class="n">network</span><span class="p">)</span>
+            <span class="n">cmpts</span> <span class="o">=</span> <span class="n">_find_connected_component</span><span class="p">(</span><span class="n">cmpts</span><span class="p">,</span><span class="n">neighbor</span><span class="p">,</span> <span class="n">network</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">cmpts</span>
         
     
-<span class="c">#if a combination summing to the infection size is found, return the component sizes </span>
-<span class="c">#otherwise, return a list of lists (i.e. sub_sums) </span>
-<span class="c">#with a new list element (i.e. subsequence of connected components) appended</span>
-<span class="k">def</span> <span class="nf">add_to_sub_sums</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">sub_sums</span><span class="p">,</span> <span class="n">infect_num</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_add_to_sub_sums</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">sub_sums</span><span class="p">,</span> <span class="n">infect_num</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; if a combination summing to the infection size is found, return the component sizes</span>
+<span class="sd">    else, return a list of lists (i.e. sub_sums) with a new list element (i.e. subsequence of </span>
+<span class="sd">    connected components) appended &quot;&quot;&quot;</span>
+    <span class="c">#list of the new subsequences of connected components to append to sub_sums</span>
+    <span class="n">new_combinations</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">sub_sum</span> <span class="ow">in</span> <span class="n">sub_sums</span><span class="p">:</span>
         <span class="c">#if the combination does sum up to the infection size, return the component sizes</span>
-        <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">sub_sum</span><span class="p">)</span><span class="o">+</span><span class="n">num</span> <span class="o">==</span> <span class="n">infect_num</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[</span><span class="n">sub_sum</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">num</span><span class="p">])]</span>
+        <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">sub_sum</span><span class="p">)</span> <span class="o">+</span> <span class="n">num</span> <span class="o">==</span> <span class="n">infect_num</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">sub_sum</span><span class="o">+</span><span class="p">[</span><span class="n">num</span><span class="p">]]</span>
         <span class="c">#else, only add the combination if the sum of the sub_sum list plus num is </span>
         <span class="c">#less than our desired infection size</span>
         <span class="k">elif</span> <span class="nb">sum</span><span class="p">(</span><span class="n">sub_sum</span><span class="p">)</span><span class="o">+</span><span class="n">num</span> <span class="o">&lt;</span> <span class="n">infect_num</span><span class="p">:</span>
-            <span class="n">sub_sums</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sub_sum</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">num</span><span class="p">]))</span>
+            <span class="n">new_sub_sum</span> <span class="o">=</span> <span class="n">sub_sum</span> <span class="o">+</span> <span class="p">[</span><span class="n">num</span><span class="p">]</span>
+            <span class="n">new_combinations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_sub_sum</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">comb</span> <span class="ow">in</span> <span class="n">new_combinations</span><span class="p">:</span>
+        <span class="n">sub_sums</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">comb</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">sub_sums</span>
 
-<span class="c">#infect a connected component given its size (i.e. number of nodes)</span>
-<span class="k">def</span> <span class="nf">infect_cmpt</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">cmpts_list</span><span class="p">,</span> <span class="n">num_list</span><span class="p">,</span> <span class="n">num</span><span class="p">):</span>
-    <span class="n">cmpts_to_infect</span> <span class="o">=</span> <span class="n">cmpts_list</span><span class="p">[</span><span class="n">num_list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">num</span><span class="p">)]</span>
-    <span class="n">nx</span><span class="o">.</span><span class="n">set_node_attributes</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="s">&quot;infected&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">cmpts_to_infect</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="bp">True</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">cmpts_to_infect</span><span class="p">)))))</span>
 
-<span class="c">#this function finds all connected components and their sizes</span>
-<span class="c">#then finds an appropriate combination of connected components to infect </span>
-<span class="c">#(specifically, the first combination that works)</span>
+<span class="k">def</span> <span class="nf">_infect_cmpt</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">cmpts_list</span><span class="p">,</span> <span class="n">num_list</span><span class="p">,</span> <span class="n">num</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;infect a connected component given its size (i.e. number of nodes) &quot;&quot;&quot;</span>
+    <span class="n">cmpts_to_infect</span> <span class="o">=</span> <span class="n">cmpts_list</span><span class="p">[</span><span class="n">num_list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">num</span><span class="p">)]</span>
+    <span class="n">nx</span><span class="o">.</span><span class="n">set_node_attributes</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="s">&quot;infected&quot;</span><span class="p">,</span> 
+                           <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">cmpts_to_infect</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="bp">True</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">cmpts_to_infect</span><span class="p">)))))</span>
+
 <span class="k">def</span> <span class="nf">limited_infection</span><span class="p">(</span><span class="n">infect_num</span><span class="p">,</span> <span class="n">network</span><span class="p">):</span>
-    <span class="n">network_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">())</span>
+    <span class="sd">&quot;&quot;&quot; This function finds all connected components and their sizes</span>
+<span class="sd">    then infects an exact number &#39;infect_num&#39; of nodes. If it can&#39;t find</span>
+<span class="sd">    one component of that size, it finds an appropriate combination of </span>
+<span class="sd">    connected components to  infect (specifically, the first combination </span>
+<span class="sd">    that works) &quot;&quot;&quot;</span>
+    <span class="c">### Setup</span>
+    
+    <span class="c">#get all nodes in the network</span>
+    <span class="n">all_nodes</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">()</span>
+    <span class="c">#get network length</span>
+    <span class="n">network_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_nodes</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">infect_num</span> <span class="o">&gt;</span> <span class="n">network_length</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;The infection size exceeds the network length.&quot;</span><span class="p">)</span>
-    <span class="c">#start with a connected component from a random user</span>
-    <span class="n">user</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">())</span>
-    <span class="n">cmpts</span> <span class="o">=</span> <span class="n">find_connected_component</span><span class="p">([],</span><span class="n">user</span><span class="p">,</span> <span class="n">network</span><span class="p">)</span>
+    <span class="c">#start with a random user</span>
+    <span class="n">random_user</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">all_nodes</span><span class="p">)</span>
+    <span class="c">#find the user&#39;s corresponding connected component</span>
+    <span class="n">cmpts</span> <span class="o">=</span> <span class="n">_find_connected_component</span><span class="p">([],</span><span class="n">random_user</span><span class="p">,</span> <span class="n">network</span><span class="p">)</span>
     <span class="c">#this is a list of lists for the connected components</span>
     <span class="n">cmpts_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">cmpts</span><span class="p">]</span>
+    <span class="c">#this is the number of nodes in the connected component</span>
     <span class="n">num_cmpts</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cmpts</span><span class="p">)</span>
-    <span class="c">#this is a list for the sizes of the connected components</span>
+    <span class="c">#this is a list for the sizes (i.e. number of nodes) of the connected components</span>
     <span class="n">num_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">num_cmpts</span><span class="p">]</span>
-
-    <span class="c">#if the size of the component is exactly the infection size, infect the component</span>
-    <span class="k">if</span> <span class="n">num_cmpts</span> <span class="o">==</span> <span class="n">infect_num</span><span class="p">:</span>
-        <span class="n">infect_cmpt</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">cmpts_list</span><span class="p">,</span> <span class="n">num_list</span><span class="p">,</span> <span class="n">num_cmpts</span><span class="p">)</span>
-        <span class="k">return</span> <span class="s">&quot;Successfully infected component.&quot;</span>
     <span class="c">#this counter keeps track of how many nodes we have already looked at</span>
     <span class="n">num_tested</span> <span class="o">=</span> <span class="n">num_cmpts</span>
+    <span class="c">#if the size of the component is exactly the infection size, infect the component</span>
+    <span class="k">if</span> <span class="n">num_cmpts</span> <span class="o">==</span> <span class="n">infect_num</span><span class="p">:</span>
+        <span class="n">_infect_cmpt</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">cmpts_list</span><span class="p">,</span> <span class="n">num_list</span><span class="p">,</span> <span class="n">num_cmpts</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s">&quot;Successfully infected single component of size </span><span class="si">%s</span><span class="s">.&quot;</span> <span class="o">%</span> <span class="n">infect_num</span>
     
     
-    <span class="c">#find all the connected components in the network</span>
-    <span class="k">while</span> <span class="n">num_tested</span> <span class="o">&lt;</span> <span class="n">network_length</span><span class="p">:</span>
+    <span class="c">### Step 1: find all the connected components in the network</span>
+    
+    <span class="k">while</span> <span class="n">num_tested</span> <span class="o">&lt;=</span> <span class="n">network_length</span><span class="p">:</span>
         <span class="c">#flatten the list of lists to a list to iterate</span>
         <span class="n">flattened_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">cmpt</span> <span class="k">for</span> <span class="n">cmpts</span> <span class="ow">in</span> <span class="n">cmpts_list</span> <span class="k">for</span> <span class="n">cmpt</span> <span class="ow">in</span> <span class="n">cmpts</span><span class="p">]</span>
         <span class="c">#find a random user from another component of the network not already looked at</span>
-        <span class="k">while</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">flattened_list</span><span class="p">:</span>
-            <span class="n">user</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">nodes</span><span class="p">())</span>
+        <span class="k">while</span> <span class="n">random_user</span> <span class="ow">in</span> <span class="n">flattened_list</span><span class="p">:</span>
+            <span class="n">random_user</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">all_nodes</span><span class="p">)</span>
         <span class="c">#find the connectd component the user belongs to</span>
-        <span class="n">cmpts</span> <span class="o">=</span> <span class="n">find_connected_component</span><span class="p">([],</span><span class="n">user</span><span class="p">,</span> <span class="n">network</span><span class="p">)</span>
+        <span class="n">cmpts</span> <span class="o">=</span> <span class="n">_find_connected_component</span><span class="p">([],</span><span class="n">random_user</span><span class="p">,</span> <span class="n">network</span><span class="p">)</span>
         <span class="n">num_cmpts</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cmpts</span><span class="p">)</span>
-        <span class="c">#if the size of the component is exactly the infection size, infect the component</span>
-        <span class="k">if</span> <span class="n">num_cmpts</span> <span class="o">==</span> <span class="n">infect_num</span><span class="p">:</span>
-            <span class="n">infect_cmpt</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">cmpts_list</span><span class="p">,</span> <span class="n">num_list</span><span class="p">,</span> <span class="n">num_cmpts</span><span class="p">)</span>
-            <span class="k">return</span> <span class="s">&quot;Successfully infected component.&quot;</span>
-        <span class="c">#increase the counter keeping track of the nodes accounted for in the iterations</span>
-        <span class="n">num_tested</span> <span class="o">+=</span><span class="n">num_cmpts</span>
         <span class="c">#append the connected components and their sizes to the list</span>
         <span class="n">cmpts_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cmpts</span><span class="p">)</span>
         <span class="n">num_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">num_cmpts</span><span class="p">)</span>
+        <span class="c">#if the size of the component is exactly the infection size, infect the component</span>
+        <span class="k">if</span> <span class="n">num_cmpts</span> <span class="o">==</span> <span class="n">infect_num</span><span class="p">:</span>
+            <span class="n">_infect_cmpt</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">cmpts_list</span><span class="p">,</span> <span class="n">num_list</span><span class="p">,</span> <span class="n">num_cmpts</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s">&quot;Successfully infected single component of size </span><span class="si">%s</span><span class="s">.&quot;</span> <span class="o">%</span> <span class="n">infect_num</span>
+        <span class="c">#increase the counter keeping track of the nodes accounted for in the iterations</span>
+        <span class="n">num_tested</span> <span class="o">+=</span><span class="n">num_cmpts</span>
+        
     
-    <span class="c">#choose a combination of connected components that satisfy the constraints</span>
+    <span class="c">### Step 2: iterate through combinations of connected components </span>
+    <span class="c">### to find one that satisfies the constraints</span>
+    
     <span class="c">#define an empty list of the cmpts</span>
     <span class="n">cmpt_list_to_infect</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">sorted_num_list</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">num_list</span><span class="p">)</span>
-    <span class="c">#sub_sums will be a list of lists containing the various combinations of components to add together</span>
+    <span class="c">#sub_sums will be a list of lists containing the various combinations of </span>
+    <span class="c">#components to add together</span>
     <span class="n">sub_sums</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="c">#iterate through each connected component size</span>
     <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">sorted_num_list</span><span class="p">:</span>
-        <span class="c">#if the size of the component is exactly the infection size, infect the component</span>
-        <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="n">infect_num</span><span class="p">:</span>
-            <span class="n">infect_cmpt</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">cmpts_list</span><span class="p">,</span> <span class="n">num_list</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span>
-            <span class="k">return</span> <span class="s">&quot;Successfully infected component&quot;</span>
-        <span class="c">#if the connected component size is greater than the infection size we want, so must every subsequent component</span>
+        <span class="c">#if the connected component size is greater than the infection size we want,</span>
+        <span class="c">#so must every subsequent component</span>
         <span class="k">if</span> <span class="n">num</span> <span class="o">&gt;</span> <span class="n">infect_num</span><span class="p">:</span>
             <span class="k">break</span>
-        <span class="c">#for each component size (here, num), add to sub_sum the lists of every existing combination plus num </span>
+        <span class="c">#for each component size (i.e. num)</span>
+        <span class="c">#add to sub_sum the lists of every existing combination plus num </span>
         <span class="k">if</span> <span class="n">sub_sums</span><span class="p">:</span>
-            <span class="n">subsums</span> <span class="o">=</span> <span class="n">add_to_sub_sums</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">sub_sums</span><span class="p">,</span> <span class="n">infect_num</span><span class="p">)</span>
-            <span class="c">#if add_to_sub_sums() returns the exact combination summing to the infection size,</span>
-            <span class="c">#infect those connected components</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sub_sums</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">sub_sums</span> <span class="o">=</span> <span class="n">_add_to_sub_sums</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">sub_sums</span><span class="p">,</span> <span class="n">infect_num</span><span class="p">)</span>
+            <span class="c">#if _add_to_sub_sums() returns the exact combination summing to the </span>
+            <span class="c">#infection size, infect those connected components</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sub_sums</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">sub_sums</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-                    <span class="n">infect_cmpt</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">cmpts_list</span><span class="p">,</span> <span class="n">num_list</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span>
-                <span class="k">return</span> <span class="s">&quot;Successfully infected components&quot;</span>
+                    <span class="n">_infect_cmpt</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">cmpts_list</span><span class="p">,</span> <span class="n">num_list</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span>
+                <span class="k">return</span> <span class="s">&quot;Successfully infected multiple components of summed size </span><span class="si">%s</span><span class="s">.&quot;</span> <span class="o">%</span> <span class="n">infect_num</span>
         <span class="c">#add num by itself as a combination to sub_sum</span>
         <span class="n">sub_sums</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">num</span><span class="p">])</span>
     <span class="c">#if out of the loop, there is no combination summing exactly to the infection sum</span>
@@ -451,34 +639,25 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We use a similarly structured graph for our testing this time as well.</p>
+<h2 id="Testing,-limited_infection()">Testing, limited_infection()<a class="anchor-link" href="#Testing,-limited_infection()">&#182;</a></h2><p>We use a similarly structured graph for our testing this time as well.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[46]:</div>
+<div class="prompt input_prompt">In&nbsp;[89]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="n">network1</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+<div class=" highlight hl-ipython2"><pre><span class="c">#Test Part 1</span>
+<span class="n">network1</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
 <span class="n">network1</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&quot;C&quot;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 <span class="n">network1</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 <span class="n">network1</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">)])</span>
 <span class="n">network1a</span> <span class="o">=</span> <span class="n">network1</span><span class="o">.</span><span class="n">to_undirected</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[47]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="n">limited_infection</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="n">network1a</span><span class="p">)</span>
+<span class="n">limited_infection</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="n">network1a</span><span class="p">)</span>
+<span class="c">#expect all nodes except &#39;a&#39; to be infected</span>
+<span class="n">network1a</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -489,11 +668,18 @@ div#notebook {
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[47]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[89]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&apos;Successfully infected component.&apos;</pre>
+<pre>[(&apos;A&apos;, {&apos;infected&apos;: True}),
+ (&apos;a&apos;, {&apos;infected&apos;: False}),
+ (&apos;C&apos;, {&apos;infected&apos;: True}),
+ (&apos;B&apos;, {&apos;infected&apos;: True}),
+ (&apos;e&apos;, {&apos;infected&apos;: True}),
+ (&apos;d&apos;, {&apos;infected&apos;: True}),
+ (&apos;c&apos;, {&apos;infected&apos;: True}),
+ (&apos;b&apos;, {&apos;infected&apos;: True})]</pre>
 </div>
 
 </div>
@@ -504,7 +690,191 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[48]:</div>
+<div class="prompt input_prompt">In&nbsp;[101]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="c">#Test Part 2</span>
+<span class="n">network1</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+<span class="n">network1</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&quot;C&quot;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">network1</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">network1</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">)])</span>
+<span class="n">network1a</span> <span class="o">=</span> <span class="n">network1</span><span class="o">.</span><span class="n">to_undirected</span><span class="p">()</span>
+<span class="n">limited_infection</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">network1a</span><span class="p">)</span>
+<span class="c">#expect &#39;a&#39; to be infected</span>
+<span class="n">network1a</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[101]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[(&apos;A&apos;, {&apos;infected&apos;: False}),
+ (&apos;a&apos;, {&apos;infected&apos;: True}),
+ (&apos;C&apos;, {&apos;infected&apos;: False}),
+ (&apos;B&apos;, {&apos;infected&apos;: False}),
+ (&apos;e&apos;, {&apos;infected&apos;: False}),
+ (&apos;d&apos;, {&apos;infected&apos;: False}),
+ (&apos;c&apos;, {&apos;infected&apos;: False}),
+ (&apos;b&apos;, {&apos;infected&apos;: False})]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[68]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="c">#Test Part 3</span>
+<span class="n">network1</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+<span class="n">network1</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&quot;C&quot;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">network1</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">network1</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">)])</span>
+<span class="n">network1a</span> <span class="o">=</span> <span class="n">network1</span><span class="o">.</span><span class="n">to_undirected</span><span class="p">()</span>
+<span class="n">limited_infection</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="n">network1a</span><span class="p">)</span>
+<span class="c">#expect a no nodes to be infected</span>
+<span class="n">network1a</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[68]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[(&apos;A&apos;, {&apos;infected&apos;: True}),
+ (&apos;a&apos;, {&apos;infected&apos;: True}),
+ (&apos;C&apos;, {&apos;infected&apos;: False}),
+ (&apos;B&apos;, {&apos;infected&apos;: True}),
+ (&apos;e&apos;, {&apos;infected&apos;: False}),
+ (&apos;d&apos;, {&apos;infected&apos;: False}),
+ (&apos;c&apos;, {&apos;infected&apos;: True}),
+ (&apos;b&apos;, {&apos;infected&apos;: True})]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[90]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="c">#Test Part 4</span>
+<span class="n">network1</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+<span class="n">network1</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&quot;C&quot;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">network1</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">network1</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">)])</span>
+<span class="n">network1a</span> <span class="o">=</span> <span class="n">network1</span><span class="o">.</span><span class="n">to_undirected</span><span class="p">()</span>
+<span class="n">limited_infection</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="n">network1a</span><span class="p">)</span>
+<span class="c">#expect either &quot;A&quot;,&quot;B&quot;,&#39;b&#39;,&#39;c&#39; to be infected and &quot;C&quot;,&#39;d&#39;,&#39;e&#39;,&#39;a&#39; to be unaffected</span>
+<span class="c">#or vice versa</span>
+<span class="n">network1a</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[90]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[(&apos;A&apos;, {&apos;infected&apos;: True}),
+ (&apos;a&apos;, {&apos;infected&apos;: False}),
+ (&apos;C&apos;, {&apos;infected&apos;: False}),
+ (&apos;B&apos;, {&apos;infected&apos;: True}),
+ (&apos;e&apos;, {&apos;infected&apos;: False}),
+ (&apos;d&apos;, {&apos;infected&apos;: False}),
+ (&apos;c&apos;, {&apos;infected&apos;: True}),
+ (&apos;b&apos;, {&apos;infected&apos;: True})]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[110]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="c">#Test Part 4</span>
+<span class="n">network1</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+<span class="n">network1</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&quot;C&quot;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">network1</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">],</span> <span class="n">infected</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">network1</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">([(</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">),(</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">),(</span><span class="s">&quot;C&quot;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">)])</span>
+<span class="n">network1a</span> <span class="o">=</span> <span class="n">network1</span><span class="o">.</span><span class="n">to_undirected</span><span class="p">()</span>
+<span class="n">limited_infection</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">network1a</span><span class="p">)</span>
+<span class="c">#expect an error to say the desired size of infection is larger than the network.</span>
+<span class="c">#No nodes are infected</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_text output_error">
+<pre>
+<span class="ansired">---------------------------------------------------------------------------</span>
+<span class="ansired">ValueError</span>                                Traceback (most recent call last)
+<span class="ansigreen">&lt;ipython-input-110-206e20b0df14&gt;</span> in <span class="ansicyan">&lt;module&gt;</span><span class="ansiblue">()</span>
+<span class="ansigreen">      5</span> network1<span class="ansiblue">.</span>add_edges_from<span class="ansiblue">(</span><span class="ansiblue">[</span><span class="ansiblue">(</span><span class="ansiblue">&quot;A&quot;</span><span class="ansiblue">,</span><span class="ansiblue">&apos;b&apos;</span><span class="ansiblue">)</span><span class="ansiblue">,</span> <span class="ansiblue">(</span><span class="ansiblue">&apos;A&apos;</span><span class="ansiblue">,</span><span class="ansiblue">&apos;c&apos;</span><span class="ansiblue">)</span><span class="ansiblue">,</span> <span class="ansiblue">(</span><span class="ansiblue">&quot;B&quot;</span><span class="ansiblue">,</span><span class="ansiblue">&apos;b&apos;</span><span class="ansiblue">)</span><span class="ansiblue">,</span><span class="ansiblue">(</span><span class="ansiblue">&quot;B&quot;</span><span class="ansiblue">,</span><span class="ansiblue">&apos;c&apos;</span><span class="ansiblue">)</span><span class="ansiblue">,</span><span class="ansiblue">(</span><span class="ansiblue">&quot;C&quot;</span><span class="ansiblue">,</span><span class="ansiblue">&apos;d&apos;</span><span class="ansiblue">)</span><span class="ansiblue">,</span><span class="ansiblue">(</span><span class="ansiblue">&quot;C&quot;</span><span class="ansiblue">,</span><span class="ansiblue">&apos;e&apos;</span><span class="ansiblue">)</span><span class="ansiblue">]</span><span class="ansiblue">)</span><span class="ansiblue"></span>
+<span class="ansigreen">      6</span> network1a <span class="ansiblue">=</span> network1<span class="ansiblue">.</span>to_undirected<span class="ansiblue">(</span><span class="ansiblue">)</span><span class="ansiblue"></span>
+<span class="ansigreen">----&gt; 7</span><span class="ansired"> </span>limited_infection<span class="ansiblue">(</span><span class="ansicyan">10</span><span class="ansiblue">,</span>network1a<span class="ansiblue">)</span><span class="ansiblue"></span>
+<span class="ansigreen">      8</span> <span class="ansired">#expect an error to say the desired size of infection is larger than the network.</span><span class="ansiblue"></span><span class="ansiblue"></span>
+<span class="ansigreen">      9</span> <span class="ansired">#No nodes are infected</span><span class="ansiblue"></span><span class="ansiblue"></span>
+
+<span class="ansigreen">&lt;ipython-input-100-ca89139bd7c0&gt;</span> in <span class="ansicyan">limited_infection</span><span class="ansiblue">(infect_num, network)</span>
+<span class="ansigreen">     48</span>     network_length <span class="ansiblue">=</span> len<span class="ansiblue">(</span>all_nodes<span class="ansiblue">)</span><span class="ansiblue"></span>
+<span class="ansigreen">     49</span>     <span class="ansigreen">if</span> infect_num <span class="ansiblue">&gt;</span> network_length<span class="ansiblue">:</span><span class="ansiblue"></span>
+<span class="ansigreen">---&gt; 50</span><span class="ansired">         </span><span class="ansigreen">raise</span> ValueError<span class="ansiblue">(</span><span class="ansiblue">&quot;The infection size exceeds the network length.&quot;</span><span class="ansiblue">)</span><span class="ansiblue"></span>
+<span class="ansigreen">     51</span>     <span class="ansired">#start with a random user</span><span class="ansiblue"></span><span class="ansiblue"></span>
+<span class="ansigreen">     52</span>     random_user <span class="ansiblue">=</span> np<span class="ansiblue">.</span>random<span class="ansiblue">.</span>choice<span class="ansiblue">(</span>all_nodes<span class="ansiblue">)</span><span class="ansiblue"></span>
+
+<span class="ansired">ValueError</span>: The infection size exceeds the network length.</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[111]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="n">network1a</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
@@ -518,16 +888,16 @@ div#notebook {
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[48]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[111]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
 <pre>[(&apos;A&apos;, {&apos;infected&apos;: False}),
  (&apos;a&apos;, {&apos;infected&apos;: False}),
- (&apos;C&apos;, {&apos;infected&apos;: True}),
+ (&apos;C&apos;, {&apos;infected&apos;: False}),
  (&apos;B&apos;, {&apos;infected&apos;: False}),
- (&apos;e&apos;, {&apos;infected&apos;: True}),
- (&apos;d&apos;, {&apos;infected&apos;: True}),
+ (&apos;e&apos;, {&apos;infected&apos;: False}),
+ (&apos;d&apos;, {&apos;infected&apos;: False}),
  (&apos;c&apos;, {&apos;infected&apos;: False}),
  (&apos;b&apos;, {&apos;infected&apos;: False})]</pre>
 </div>
@@ -809,7 +1179,7 @@ JGEU/CIiCaPgFxFJmP8PKl7bBe8eNHMAAAAASUVORK5CYII=
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="To-do-with-extra-time">To do with extra time<a class="anchor-link" href="#To-do-with-extra-time">&#182;</a></h3><p>With extra time, I would love to:</p>
+<h3 id="To-do-with-extra-time">To do with extra time<a class="anchor-link" href="#To-do-with-extra-time">&#182;</a></h3><p>If I were to spend more time, I would:</p>
 <ol>
 <li>Improve the algorithm in limited_infection() to be more efficient and also allow leeway from the exact threshold. In the end, the purpose of limited infection for A/B testing is not necessarily to infect an exact number of users, but to get roughly appropriate sizes for the treatment and control groups. </li>
 <li>Oftentimes, we want to test not just one feature, but multiple versions of that specific feature (if, for example, the infection is used to test out multiple versions of a feature). Thus, I would also like to create a new version of limited_infection() that allows for this so that one would be able to conduct multiple comparisons.</li>
